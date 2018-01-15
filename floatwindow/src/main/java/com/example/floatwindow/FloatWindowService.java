@@ -212,9 +212,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
                 handler.sendMessage(message2);
                 break;
             case R.id.keyboard_return:
-                Message message3 = new Message();
-                message3.what = SIGNAL_KEYBOARD_RETURN;
-                handler.sendMessage(message3);
+                stopSelf(); // 停止服务，使其走OnDestroy方法，然后移除悬浮窗。
                 break;
             default:
                 break;
@@ -305,7 +303,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        windowManager.removeView(view);
+        //windowManager.removeView(view);
     }
 
     @Override
