@@ -10,11 +10,48 @@
         android:layout_height="0dp"
         android:layout_weight="6" />
 
-    <SeekBar
-        android:id="@+id/video_progress"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <SeekBar
+            android:id="@+id/video_progress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+
+            <TextView
+                android:id="@+id/video_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="@string/text_video_time_text"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/video_toggle_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:gravity="center|top"
+                android:paddingRight="10dp"
+                android:text="@string/text_video_time_text"
+                android:textColor="@color/colorPrimary" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

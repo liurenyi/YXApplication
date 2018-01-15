@@ -5,4 +5,5 @@
     <string name="ima_fast_forward_text">快进</string>
     <string name="ima_fast_rewind_text">快退</string>
     <string name="ima_keyboard_return_text">退出</string>
+    <string name="text_video_time_text">00:00</string>
 </resources>

@@ -17,9 +17,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.floatwindow.log.logw;
+import com.example.floatwindow.util.EncapsulateClass;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -30,13 +32,15 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnVideoSizeChangedListener,
         SeekBar.OnSeekBarChangeListener {
 
-    public static final String TAG = "FloatWindowService";
+    public static final String TAG = "liu-FloatWindowService";
     public Button btnTest;
     public ImageView imgFastForward; //快进
     public ImageView imgFastRewind; // 后退
     public ImageView imgPlayAndPause; // 暂停
     public ImageView imgKeyboardReturn; // 退出
-    public SeekBar seekBarVideoProgress;
+    public SeekBar seekBarVideoProgress; // 视频进度条
+    public TextView textVideoTime;  // 视频当前时间进度
+    public TextView textToggleVideoTime; //视频总共时长
     public boolean isPlaying = false; //是否正在播放
     public TimerTask timerTask;
     public Timer timer;
@@ -52,6 +56,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     public static final int SIGNAL_FAST_REWIND = 2;
     public static final int SIGNAL_PLAY_AND_PAUSE = 3;
     public static final int SIGNAL_KEYBOARD_RETURN = 4;
+    public static final int SIGNAL_UPDATE_PLAYING_VIDEO_TIME = 5;
 
     private Handler handler = new Handler() {
         @Override
@@ -79,8 +84,13 @@ public class FloatWindowService extends Service implements View.OnClickListener,
                         mediaPlayer.release();
                         mediaPlayer = null;
                     }
-                    windowManager.removeViewImmediate(view);
+                    windowManager.removeView(view);
                     stopSelf();
+                    break;
+                case SIGNAL_UPDATE_PLAYING_VIDEO_TIME:
+                    textVideoTime.setText(EncapsulateClass.formatTime(mediaPlayer.getCurrentPosition())); //设置当前位置的时间的进度
+                    break;
+                default:
                     break;
             }
         }
@@ -117,7 +127,11 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        windowManager.removeView(view);
+        timerTask.cancel(); // 退出悬浮窗口时候，取消计时器任务。
+//        windowManager.removeView(view);
+        Message message = new Message();
+        message.what = SIGNAL_KEYBOARD_RETURN;
+        handler.sendMessage(message);
         logw.e(TAG, "-->onDestroy()");
     }
 
@@ -218,6 +232,8 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         imgPlayAndPause = view.findViewById(R.id.play_and_pause);
         imgKeyboardReturn = view.findViewById(R.id.keyboard_return);
         seekBarVideoProgress = view.findViewById(R.id.video_progress);
+        textVideoTime = view.findViewById(R.id.video_time);
+        textToggleVideoTime = view.findViewById(R.id.video_toggle_time);
         imgFastForward.setOnClickListener(this);
         imgFastRewind.setOnClickListener(this);
         imgPlayAndPause.setOnClickListener(this);
@@ -252,16 +268,22 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         mediaPlayer.setDisplay(surfaceHolder);
         try {
             mediaPlayer.prepare();
-            logw.i(TAG,"duration: " + mediaPlayer.getDuration());
             seekBarVideoProgress.setMax(mediaPlayer.getDuration());
+            textToggleVideoTime.setText(EncapsulateClass.formatTime(mediaPlayer.getDuration())); //获取视频总共时间
             timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    seekBarVideoProgress.setProgress(mediaPlayer.getCurrentPosition());
+                    if (mediaPlayer != null) {
+                        seekBarVideoProgress.setProgress(mediaPlayer.getCurrentPosition());
+                        Message message = new Message();
+                        message.what = SIGNAL_UPDATE_PLAYING_VIDEO_TIME;
+                        message.arg1 = mediaPlayer.getCurrentPosition();
+                        handler.sendMessage(message);
+                    }
                 }
             };
-            timer.schedule(timerTask,0,1000);
+            timer.schedule(timerTask, 0, 1000);
             mediaPlayer.start();
             isPlaying = true;
             updateImgForPlaying(isPlaying);
@@ -283,6 +305,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        windowManager.removeView(view);
     }
 
     @Override
