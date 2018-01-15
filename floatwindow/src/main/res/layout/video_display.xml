@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6" />
+
+    <SeekBar
+        android:id="@+id/video_progress"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#000030"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/fast_rewind"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_fast_rewind_24dp"
+            android:contentDescription="@string/ima_fast_rewind_text" />
+
+        <ImageView
+            android:id="@+id/play_and_pause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_play_arrow_24dp"
+            android:contentDescription="@string/ima_play_and_pause_text" />
+
+        <ImageView
+            android:id="@+id/fast_forward"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_fast_forward_24dp"
+            android:contentDescription="@string/ima_fast_forward_text" />
+
+        <ImageView
+            android:id="@+id/keyboard_return"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_keyboard_return_24dp"
+            android:contentDescription="@string/ima_keyboard_return_text" />
+
+    </LinearLayout>
+
+</LinearLayout>

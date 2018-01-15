@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/YXApplication.iml" filepath="$PROJECT_DIR$/YXApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/a2dpdemo/a2dpdemo.iml" filepath="$PROJECT_DIR$/a2dpdemo/a2dpdemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app1/app1.iml" filepath="$PROJECT_DIR$/app1/app1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bluetoothtest/bluetoothtest.iml" filepath="$PROJECT_DIR$/bluetoothtest/bluetoothtest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/floatwindow/floatwindow.iml" filepath="$PROJECT_DIR$/floatwindow/floatwindow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/memorandummanager/memorandummanager.iml" filepath="$PROJECT_DIR$/memorandummanager/memorandummanager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/myapplication/myapplication.iml" filepath="$PROJECT_DIR$/myapplication/myapplication.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FloatWindow</string>
+    <string name="create_float_window_text">创建悬浮窗口</string>
+    <string name="ima_play_and_pause_text">播放/赞停</string>
+    <string name="ima_fast_forward_text">快进</string>
+    <string name="ima_fast_rewind_text">快退</string>
+    <string name="ima_keyboard_return_text">退出</string>
+</resources>
