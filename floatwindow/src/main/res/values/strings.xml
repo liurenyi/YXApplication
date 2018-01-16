@@ -6,4 +6,5 @@
     <string name="ima_fast_rewind_text">快退</string>
     <string name="ima_keyboard_return_text">退出</string>
     <string name="text_video_time_text">00:00</string>
+    <string name="btn_play_text">播放</string>
 </resources>

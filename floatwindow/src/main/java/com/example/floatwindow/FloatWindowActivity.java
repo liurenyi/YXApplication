@@ -1,6 +1,8 @@
 package com.example.floatwindow;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -10,10 +12,17 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
-public class FloatWindowActivity extends AppCompatActivity implements View.OnClickListener {
+import com.example.floatwindow.log.logw;
+
+public class FloatWindowActivity extends AppCompatActivity implements View.OnClickListener,MediaPlayer.OnCompletionListener {
 
     public Button btnFloatWindow;
+    public Button btnPlayVideo;
+    public VideoView videoView;
+    public String filePath = "/mnt/sdcard/test.mp4";
     public static final int STOP_SERVICE = 1;
     public static final int START_SERVICE = 2;
     public Message message;
@@ -44,7 +53,14 @@ public class FloatWindowActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_float_window);
 
         btnFloatWindow = (Button) this.findViewById(R.id.create_float_window);
+        btnPlayVideo = (Button) this.findViewById(R.id.play);
         btnFloatWindow.setOnClickListener(this);
+        btnPlayVideo.setOnClickListener(this);
+        videoView = (VideoView) this.findViewById(R.id.video_view);
+        Uri uri = Uri.parse(filePath);
+        videoView.setMediaController(new MediaController(this));
+        videoView.setVideoURI(uri);
+        videoView.setOnCompletionListener(this);
     }
 
     @Override
@@ -62,6 +78,12 @@ public class FloatWindowActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
                 break;
+            case R.id.play:
+                if (!videoView.isPlaying()){
+                    videoView.start();
+                    videoView.requestFocus();
+                }
+                break;
             default:
                 break;
         }
@@ -75,5 +97,10 @@ public class FloatWindowActivity extends AppCompatActivity implements View.OnCli
             handler.sendMessage(message);
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        logw.i("liu","...");
     }
 }
