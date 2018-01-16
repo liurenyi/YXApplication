@@ -1,6 +1,7 @@
 package com.example.floatwindow.util;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.view.WindowManager;
 
 import com.example.floatwindow.log.logw;
@@ -17,6 +18,7 @@ public class EncapsulateClass {
     public static final int A_SECOND = 1000;
 
     public static WindowManager windowManager;
+    public static AudioManager audioManager;
 
     /**
      * 格式化时间
@@ -49,15 +51,25 @@ public class EncapsulateClass {
     public static int getHeight(Context context) {
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int height = windowManager.getDefaultDisplay().getHeight();
-        logw.i(TAG,"height: " + height);
+        logw.i(TAG, "height: " + height);
         return height;
     }
 
     public static int getWidth(Context context) {
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int width = windowManager.getDefaultDisplay().getWidth();
-        logw.i(TAG,"width: " + width);
+        logw.i(TAG, "width: " + width);
         return width;
+    }
+
+    public static void addVolume(Context context) {
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FX_FOCUS_NAVIGATION_UP);
+    }
+
+    public static void reduceVolume(Context context) {
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FX_FOCUS_NAVIGATION_UP);
     }
 
 }

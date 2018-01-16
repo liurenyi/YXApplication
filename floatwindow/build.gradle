@@ -29,5 +29,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
+    compile 'com.squareup.okio:okio:1.5.0'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
     testCompile 'junit:junit:4.12'
 }
