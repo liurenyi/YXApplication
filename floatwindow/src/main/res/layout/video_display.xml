@@ -1,97 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6" />
+        android:layout_height="match_parent" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/video_control"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <SeekBar
-            android:id="@+id/video_progress"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingBottom="64dp">
 
-        <RelativeLayout
+            <SeekBar
+                android:id="@+id/video_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/video_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="@string/text_video_time_text"
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/video_toggle_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center|top"
+                    android:paddingRight="10dp"
+                    android:text="@string/text_video_time_text"
+                    android:textColor="@color/colorPrimary" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/video_function_key"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2">
+            android:layout_height="64dp"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/video_time"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/fast_rewind"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:text="@string/text_video_time_text"
-                android:textColor="@color/colorPrimary" />
+                android:layout_weight="1"
+                android:background="@drawable/ic_fast_rewind_24dp"
+                android:contentDescription="@string/ima_fast_rewind_text" />
 
-            <TextView
-                android:id="@+id/video_toggle_time"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/play_and_pause"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:gravity="center|top"
-                android:paddingRight="10dp"
-                android:text="@string/text_video_time_text"
-                android:textColor="@color/colorPrimary" />
+                android:layout_weight="1"
+                android:background="@drawable/ic_play_arrow_24dp"
+                android:contentDescription="@string/ima_play_and_pause_text" />
 
-        </RelativeLayout>
+            <ImageView
+                android:id="@+id/fast_forward"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_fast_forward_24dp"
+                android:contentDescription="@string/ima_fast_forward_text" />
 
+            <ImageView
+                android:id="@+id/keyboard_return"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_keyboard_return_24dp"
+                android:contentDescription="@string/ima_keyboard_return_text" />
 
-    </LinearLayout>
+        </LinearLayout>
 
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#000030"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/fast_rewind"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/ic_fast_rewind_24dp"
-            android:contentDescription="@string/ima_fast_rewind_text" />
-
-        <ImageView
-            android:id="@+id/play_and_pause"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/ic_play_arrow_24dp"
-            android:contentDescription="@string/ima_play_and_pause_text" />
-
-        <ImageView
-            android:id="@+id/fast_forward"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/ic_fast_forward_24dp"
-            android:contentDescription="@string/ima_fast_forward_text" />
-
-        <ImageView
-            android:id="@+id/keyboard_return"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/ic_keyboard_return_24dp"
-            android:contentDescription="@string/ima_keyboard_return_text" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

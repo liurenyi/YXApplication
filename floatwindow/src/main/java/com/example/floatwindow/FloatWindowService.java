@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     public TextView textVideoTime;  // 视频当前时间进度
     public TextView textToggleVideoTime; //视频总共时长
     public boolean isPlaying = false; //是否正在播放
+    public RelativeLayout videoControl;
     public TimerTask timerTask;
     public Timer timer;
     public View view;
@@ -49,8 +51,8 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     public SurfaceView surfaceView;
     public WindowManager windowManager;
     public WindowManager.LayoutParams layoutParams;
-    public int FloatWindowWidth = 480;
-    public int FloatWindowHeight = 720;
+    public int FloatWindowWidth;
+    public int FloatWindowHeight;
 
     public static final int SIGNAL_FAST_FORWARD = 1;
     public static final int SIGNAL_FAST_REWIND = 2;
@@ -163,6 +165,9 @@ public class FloatWindowService extends Service implements View.OnClickListener,
 		 * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL |
 		 * LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE;
 		 */
+        FloatWindowHeight = EncapsulateClass.getHeight(getApplicationContext()) * 3 / 4;
+        FloatWindowWidth = EncapsulateClass.getWidth(getApplicationContext()) * 3 / 4;
+        logw.i(TAG, "FloatWindowWidth: " + FloatWindowWidth + " FloatWindowHeight: " + FloatWindowHeight);
         layoutParams.width = FloatWindowWidth;
         layoutParams.height = FloatWindowHeight;
         // 监听悬浮窗口事件
@@ -232,6 +237,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         seekBarVideoProgress = view.findViewById(R.id.video_progress);
         textVideoTime = view.findViewById(R.id.video_time);
         textToggleVideoTime = view.findViewById(R.id.video_toggle_time);
+        videoControl = view.findViewById(R.id.video_control);
         imgFastForward.setOnClickListener(this);
         imgFastRewind.setOnClickListener(this);
         imgPlayAndPause.setOnClickListener(this);
