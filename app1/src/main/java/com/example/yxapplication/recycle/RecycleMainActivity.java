@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -27,6 +28,10 @@ public class RecycleMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*隐藏掉状态栏，透明化状态只需要在style中定义windowTranslucentStatus为false即可*/
+        /*Window window = getWindow();
+        int fullscreen = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        window.setFlags(fullscreen, fullscreen);*/
         setContentView(R.layout.activity_recycle_main);
         initDatas();
         mRecyclerView = (RecyclerView) this.findViewById(R.id.recycler_view);
