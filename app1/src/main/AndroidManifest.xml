@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".recycle.RecycleMainActivity"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".recycle.RecycleMainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".MyService"
@@ -26,6 +28,7 @@
             android:exported="true" />
 
         <activity android:name=".ServiceActivity" />
+        <activity android:name=".recycle.RecyclerGridActivity"></activity>
     </application>
 
 </manifest>

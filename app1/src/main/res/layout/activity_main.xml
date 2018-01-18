@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.example.yxapplication.MainActivity">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,6 +15,25 @@
     <ListView
         android:id="@+id/list_item"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
+
+    <Button
+        android:id="@+id/recycler_linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/layout_linear" />
+
+    <Button
+        android:id="@+id/recycler_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/layout_grid" />
+
+    <Button
+        android:id="@+id/recycler_pubu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/layout_pubu" />
+
 
 </LinearLayout>

@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">YXApplication</string>
+    <string name="layout_linear">线性布局</string>
+    <string name="layout_grid">网格布局</string>
+    <string name="layout_pubu">瀑布流布局</string>
 </resources>

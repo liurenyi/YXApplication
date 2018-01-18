@@ -1,3 +1,8 @@
 2018/01/18 09:55
 1. 增加RecyclerView的item的单点击事件。
 2. 增加RecyclerView的滚动事件。图片实现滚动播放效果。
+
+2018/01/18 13:54
+                 http://blog.csdn.net/skykingf/article/details/50827141
+                 1. 增加Gridview的布局，以及瀑布流的布局，详情可参考链接
+                 2. 增加itme之间的下划线分布
