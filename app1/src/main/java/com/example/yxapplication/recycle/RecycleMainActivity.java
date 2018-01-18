@@ -1,13 +1,11 @@
 package com.example.yxapplication.recycle;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,16 +34,41 @@ public class RecycleMainActivity extends AppCompatActivity {
         initDatas();
         mRecyclerView = (RecyclerView) this.findViewById(R.id.recycler_view);
         imgShow = (ImageView) this.findViewById(R.id.show_img);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        final LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);
         galleryAdapter = new GalleryAdapter(this, mDatas);
         mRecyclerView.setAdapter(galleryAdapter);
-        galleryAdapter.setOnItemClickListener(new GalleryAdapter.OnItemClickListener() {
+        galleryAdapter.setOnItemClickListener(new RecyclerViewListener.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
                 Toast.makeText(RecycleMainActivity.this, "position: " + position, Toast.LENGTH_LONG).show();
                 imgShow.setBackgroundResource(mDatas.get(position));
+            }
+        });
+        /**
+         * mRecyclerView滚动的监听事件
+         */
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE: //0（SCROLL_STATE_IDLE）表示recyclerview是不动的
+                    case RecyclerView.SCROLL_STATE_DRAGGING: //1（SCROLL_STATE_DRAGGING）表示recyclerview正在被拖拽
+                    case RecyclerView.SCROLL_STATE_SETTLING: //2（SCROLL_STATE_SETTLING）表示recyclerview正在惯性下滚动
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstVisibleItemPosition = manager.findFirstVisibleItemPosition(); //获取可是范围内，第一个item的位置
+                int lastVisibleItemPosition = manager.findLastVisibleItemPosition(); //获取可是范围内，最后一个item的位置
+                int itemCount = manager.getItemCount();
+                Log.i("liu", "firstVisibleItemPosition: " + firstVisibleItemPosition + " lastVisibleItemPosition: " + lastVisibleItemPosition);
+                Log.i("liu", "itemCount: " + itemCount + " dx: " + dx + " dy: " + dy);
+                imgShow.setBackgroundResource(mDatas.get(firstVisibleItemPosition));
             }
         });
     }

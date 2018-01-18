@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.yxapplication.R;
+import com.example.yxapplication.recycle.RecyclerViewListener;
 
 import java.util.List;
 
@@ -21,13 +22,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private LayoutInflater inflater;
     private List<Integer> mDatas;
 
-    public OnItemClickListener onItemClickListener;
+    public RecyclerViewListener.OnItemClickListener onItemClickListener;
 
-    public interface OnItemClickListener {
-        void OnItemClick(View view, int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(RecyclerViewListener.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
