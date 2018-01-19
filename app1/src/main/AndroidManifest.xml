@@ -29,6 +29,9 @@
 
         <activity android:name=".ServiceActivity" />
         <activity android:name=".recycle.RecyclerGridActivity" />
+        <activity
+            android:name=".viewpager.UseViewpagerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.yxapplication.recycle.RecycleMainActivity;
 import com.example.yxapplication.recycle.RecyclerGridActivity;
+import com.example.yxapplication.viewpager.UseViewpagerActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ListView listView;
     public ArrayList<Map<String, String>> mLists = new ArrayList<>();
     public MyAdapter mAdapter;
-    public Button btnLinear, btnGrid, btnPubu;
+    public Button btnLinear, btnGrid, btnPubu, btnViewpagerUsed;
     public Intent intent;
 
     @Override
@@ -46,9 +47,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnLinear = (Button) this.findViewById(R.id.recycler_linearLayout);
         btnGrid = (Button) this.findViewById(R.id.recycler_grid);
         btnPubu = (Button) this.findViewById(R.id.recycler_pubu);
+        btnViewpagerUsed = (Button) this.findViewById(R.id.btn_viewpager_test);
         btnLinear.setOnClickListener(this);
         btnGrid.setOnClickListener(this);
         btnPubu.setOnClickListener(this);
+        btnViewpagerUsed.setOnClickListener(this);
     }
 
     private void test() {
@@ -90,6 +93,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.recycler_pubu:
                 intent = new Intent();
                 intent.setClass(this, RecycleMainActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.btn_viewpager_test:
+                intent = new Intent();
+                intent.setClass(this, UseViewpagerActivity.class);
                 startActivity(intent);
                 break;
         }
