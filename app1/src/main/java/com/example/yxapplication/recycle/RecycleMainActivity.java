@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.yxapplication.R;
 import com.example.yxapplication.recycle.adapter.GalleryAdapter;
+import com.example.yxapplication.recycle.util.SpacesItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class RecycleMainActivity extends AppCompatActivity {
         imgShow = (ImageView) this.findViewById(R.id.show_img);
         final LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration(15,true));
         mRecyclerView.setLayoutManager(manager);
         galleryAdapter = new GalleryAdapter(this, mDatas);
         mRecyclerView.setAdapter(galleryAdapter);
@@ -74,7 +76,7 @@ public class RecycleMainActivity extends AppCompatActivity {
     }
 
     private void initDatas() {
-        mDatas = new ArrayList<>(Arrays.asList(R.drawable.image_1, R.drawable.image_2, R.drawable.image_3, R.drawable.image_4,
+        mDatas = new ArrayList<>(Arrays.asList(R.drawable.image_1, R.drawable.image_2, R.drawable.image_3,
                 R.drawable.image_5, R.drawable.image_6, R.drawable.image_7, R.drawable.image_8,
                 R.drawable.image_9, R.drawable.image_10));
     }

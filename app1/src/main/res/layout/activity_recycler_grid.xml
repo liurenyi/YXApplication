@@ -8,6 +8,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_grid_view"
         android:layout_width="match_parent"
-        android:layout_height="480dp" />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
