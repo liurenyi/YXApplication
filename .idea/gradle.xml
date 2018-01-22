@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/floatwindow" />
             <option value="$PROJECT_DIR$/memorandummanager" />
             <option value="$PROJECT_DIR$/myapplication" />
+            <option value="$PROJECT_DIR$/schedulemanager" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

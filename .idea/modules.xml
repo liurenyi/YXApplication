@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/floatwindow/floatwindow.iml" filepath="$PROJECT_DIR$/floatwindow/floatwindow.iml" />
       <module fileurl="file://$PROJECT_DIR$/memorandummanager/memorandummanager.iml" filepath="$PROJECT_DIR$/memorandummanager/memorandummanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/myapplication/myapplication.iml" filepath="$PROJECT_DIR$/myapplication/myapplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/schedulemanager/schedulemanager.iml" filepath="$PROJECT_DIR$/schedulemanager/schedulemanager.iml" />
     </modules>
   </component>
 </project>
