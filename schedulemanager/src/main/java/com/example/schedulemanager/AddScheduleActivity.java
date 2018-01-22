@@ -6,8 +6,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.schedulemanager.database.Schedule;
@@ -20,8 +22,12 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     public EditText edtRemarks;
     public Button btnOK;
     public Button btnCancle;
+    public Spinner spinner;
+
     public String themeString;
     public String remarksString;
+    public String typeString;
+
     private Schedule mShedule;
     private ScheduleType mScheduleType;
 
@@ -44,6 +50,20 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         btnCancle = (Button) this.findViewById(R.id.btn_cancle);
         btnOK.setOnClickListener(this);
         btnCancle.setOnClickListener(this);
+
+        spinner = (Spinner) this.findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] array = getResources().getStringArray(R.array.spinner_type);
+                typeString = array[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     @Override
@@ -67,6 +87,7 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         mShedule = new Schedule();
         mShedule.setTitle(themeString);
         mShedule.setNote(remarksString);
+        mShedule.setType(typeString);
         mShedule.setDate(UtilClass.getCurrentDate());
         mShedule.setTime(UtilClass.getCurrentTime());
         mShedule.save();

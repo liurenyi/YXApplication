@@ -41,6 +41,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         viewHolder.date = view.findViewById(R.id.tv_date);
         viewHolder.time = view.findViewById(R.id.tv_time);
         viewHolder.title = view.findViewById(R.id.tv_schedule_info);
+        viewHolder.type = view.findViewById(R.id.tv_schedule_type);
         return viewHolder;
     }
 
@@ -48,12 +49,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.date.setText(mLists.get(position).getDate());
         holder.time.setText(mLists.get(position).getTime());
+        holder.type.setText("[ " + mLists.get(position).getType() + " ]");
         holder.title.setText(UtilClass.getFormatString(mLists.get(position).getTitle()));
         if (listener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.OnItemClick(view,position);
+                    listener.OnItemClick(view, position);
                 }
             });
         }
@@ -73,5 +75,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         TextView date;
         TextView time;
         TextView title;
+        TextView type;
     }
 }
