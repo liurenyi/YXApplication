@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.example.schedulemanager.R;
 import com.example.schedulemanager.database.Schedule;
+import com.example.schedulemanager.util.RecyclerViewListener;
+import com.example.schedulemanager.util.UtilClass;
 
 import java.util.List;
 
@@ -21,6 +23,11 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
 
     private LayoutInflater inflater;
     private List<Schedule> mLists;
+    public RecyclerViewListener.OnItemClickListener listener;
+
+    public void setListener(RecyclerViewListener.OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public ScheduleAdapter(Context context, List<Schedule> mLists) {
         inflater = LayoutInflater.from(context);
@@ -38,10 +45,18 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.date.setText(mLists.get(position).getDate());
         holder.time.setText(mLists.get(position).getTime());
-        holder.title.setText(mLists.get(position).getTitle());
+        holder.title.setText(UtilClass.getFormatString(mLists.get(position).getTitle()));
+        if (listener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.OnItemClick(view,position);
+                }
+            });
+        }
     }
 
     @Override

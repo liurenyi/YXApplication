@@ -12,9 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.schedulemanager.adapter.ScheduleAdapter;
 import com.example.schedulemanager.database.Schedule;
+import com.example.schedulemanager.util.RecyclerViewListener;
 
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
@@ -84,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLists = QueryDb();
         adapter = new ScheduleAdapter(MainActivity.this, mLists);
         recyclerViewSchedule.setAdapter(adapter);
+        // item的回调事件
+        adapter.setListener(new RecyclerViewListener.OnItemClickListener() {
+            @Override
+            public void OnItemClick(View view, int position) {
+
+            }
+        });
     }
 
     private void initUI() {
