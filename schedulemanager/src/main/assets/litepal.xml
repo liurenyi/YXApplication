@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="schedule_manager" />
+    <version value="1" />
+    <list>
+        <mapping class="com.example.schedulemanager.database.ScheduleType" />
+        <mapping class="com.example.schedulemanager.database.Schedule" />
+    </list>
+</litepal>
