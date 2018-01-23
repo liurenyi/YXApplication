@@ -12,4 +12,8 @@ public class RecyclerViewListener {
         void OnItemClick(View view, int position);
     }
 
+    public interface OnItemLongClickListener {
+        void OnItemLongClick(View view, int position);
+    }
+
 }

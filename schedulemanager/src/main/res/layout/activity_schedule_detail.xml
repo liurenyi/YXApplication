@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.schedulemanager.ScheduleDetailActivity">
+
+    <include
+        android:id="@+id/schedule_id"
+        layout="@layout/schedule_lable_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:id="@+id/tv_schedule_created_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/schedule_id"
+        android:gravity="left|center_horizontal"
+        android:padding="@dimen/tv_margin"
+        android:textSize="14sp"
+        tools:ignore="RtlHardcoded" />
+
+    <EditText
+        android:id="@+id/edit_schedule_remark_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_schedule_created_time"
+        android:background="@drawable/edit_background_1"
+        android:gravity="left|top"
+        android:padding="@dimen/tv_margin"
+        android:textColor="@color/colorPrimaryDark"
+        tools:ignore="RtlHardcoded" />
+
+</RelativeLayout>

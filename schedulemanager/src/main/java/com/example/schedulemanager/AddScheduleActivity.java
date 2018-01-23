@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -20,9 +21,9 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
 
     public EditText edtTheme;
     public EditText edtRemarks;
-    public Button btnOK;
-    public Button btnCancle;
     public Spinner spinner;
+    public ImageView imgOK;
+    public ImageView imgCancle;
 
     public String themeString;
     public String remarksString;
@@ -46,10 +47,10 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         edtTheme.addTextChangedListener(new ThemeTextWatcher());
         edtRemarks.addTextChangedListener(new RemarksTextWatcher());
 
-        btnOK = (Button) this.findViewById(R.id.btn_ok);
-        btnCancle = (Button) this.findViewById(R.id.btn_cancle);
-        btnOK.setOnClickListener(this);
-        btnCancle.setOnClickListener(this);
+        imgOK = (ImageView) this.findViewById(R.id.img_save);
+        imgCancle = (ImageView) this.findViewById(R.id.img_back);
+        imgOK.setOnClickListener(this);
+        imgCancle.setOnClickListener(this);
 
         spinner = (Spinner) this.findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -69,12 +70,12 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_ok:
+            case R.id.img_save:
                 saveAddSchedule();
-                Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
-                finish();
+
+
                 break;
-            case R.id.btn_cancle:
+            case R.id.img_back:
                 finish();
                 break;
         }
@@ -90,7 +91,15 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         mShedule.setType(typeString);
         mShedule.setDate(UtilClass.getCurrentDate());
         mShedule.setTime(UtilClass.getCurrentTime());
-        mShedule.save();
+        if (themeString == null) {
+            Toast.makeText(this, "必须输入主题", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            mShedule.save();
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
     }
 
     /**

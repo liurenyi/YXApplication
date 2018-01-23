@@ -34,7 +34,7 @@ public class UtilClass {
      */
     public static String getFormatString(String string) {
         String str = "";
-        if (!"".equals(string)) {
+        if (string != null) {
             Pattern pattern = Pattern.compile("\\s|\n|\r|\t");//去掉
             Matcher matcher = pattern.matcher(string);
             str = matcher.replaceAll("");

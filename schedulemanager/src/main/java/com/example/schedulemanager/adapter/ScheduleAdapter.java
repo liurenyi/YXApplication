@@ -24,6 +24,12 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     private LayoutInflater inflater;
     private List<Schedule> mLists;
     public RecyclerViewListener.OnItemClickListener listener;
+    public RecyclerViewListener.OnItemLongClickListener longClickListener;
+
+
+    public void setLongClickListener(RecyclerViewListener.OnItemLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
+    }
 
     public void setListener(RecyclerViewListener.OnItemClickListener listener) {
         this.listener = listener;
@@ -56,6 +62,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
                 @Override
                 public void onClick(View view) {
                     listener.OnItemClick(view, position);
+                }
+            });
+        }
+        //长按点击事件
+        if (longClickListener!= null) {
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    longClickListener.OnItemLongClick(view,position);
+                    return false;
                 }
             });
         }

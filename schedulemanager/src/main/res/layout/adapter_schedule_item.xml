@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -14,21 +15,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="@dimen/tv_margin_bottom"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:paddingTop="@dimen/tv_margin_top" />
+            android:paddingBottom="@dimen/tv_margin_top_and_bottom"
+            android:paddingLeft="@dimen/tv_margin_left_and_right"
+            android:paddingRight="@dimen/tv_margin_left_and_right"
+            android:paddingTop="@dimen/tv_margin_top_and_bottom"
+            tools:ignore="RtlHardcoded" />
 
         <TextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="10dp"
-            android:paddingBottom="@dimen/tv_margin_bottom"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:paddingTop="@dimen/tv_margin_top" />
+            android:paddingBottom="@dimen/tv_margin_top_and_bottom"
+            android:paddingLeft="@dimen/tv_margin_left_and_right"
+            android:paddingRight="@dimen/tv_margin_left_and_right"
+            android:paddingTop="@dimen/tv_margin_top_and_bottom"
+            tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
 
@@ -42,22 +44,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="10dp"
-            android:paddingBottom="@dimen/tv_margin_bottom"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:paddingTop="@dimen/tv_margin_top" />
+            android:paddingBottom="@dimen/tv_margin_top_and_bottom"
+            android:paddingLeft="@dimen/tv_margin_left_and_right"
+            android:paddingRight="@dimen/tv_margin_left_and_right"
+            android:paddingTop="@dimen/tv_margin_top_and_bottom"
+            android:textSize="@dimen/tv_size"
+            tools:ignore="RtlHardcoded" />
 
         <TextView
             android:id="@+id/tv_schedule_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="10dp"
-            android:paddingBottom="@dimen/tv_margin_bottom"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:paddingTop="@dimen/tv_margin_top" />
+            android:paddingBottom="@dimen/tv_margin_top_and_bottom"
+            android:paddingLeft="@dimen/tv_margin_left_and_right"
+            android:paddingRight="@dimen/tv_margin_left_and_right"
+            android:paddingTop="@dimen/tv_margin_top_and_bottom"
+            android:textSize="@dimen/tv_size"
+            tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
 
