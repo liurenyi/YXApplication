@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Song Machine</string>
+    <string name="app_request_permission_hint">Song Machine</string>
+</resources>

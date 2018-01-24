@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">点歌机</string>
+    <string name="app_request_permission_hint">必须同意所请求的权限，App才可以正常使用</string>
+</resources>
