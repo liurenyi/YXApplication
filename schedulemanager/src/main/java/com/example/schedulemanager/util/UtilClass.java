@@ -70,10 +70,10 @@ public class UtilClass {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setNavigationBarTintEnabled(false);
         //tintManager.setNavigationBarTintResource(R.color.colorWhite); // 无颜色出来,自定义的颜色
-        // tintManager.setTintColor(R.color.colorWhite); // 无颜色出来 ???
-        tintManager.setStatusBarTintResource(R.color.colorWhite); // 无颜色出来 ??? 设置为白色有毒，不显示，还是那个阴影
-        //tintManager.setTintColor(Color.parseColor("#FFFFFF"));
-        tintManager.setStatusBarAlpha(255);// 0全部透明
+        //tintManager.setTintColor(R.color.); // 无颜色出来 ???
+        //tintManager.setStatusBarTintResource(R.color.colorWhite); // 无颜色出来 ??? 设置为白色有毒，不显示，还是那个阴影
+        tintManager.setTintColor(Color.parseColor("#FFccFF"));
+        //tintManager.setStatusBarAlpha(255);// 0全部透明
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

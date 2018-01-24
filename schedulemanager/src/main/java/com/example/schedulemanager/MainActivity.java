@@ -3,34 +3,31 @@ package com.example.schedulemanager;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import com.example.schedulemanager.adapter.ScheduleAdapter;
 import com.example.schedulemanager.database.Schedule;
 import com.example.schedulemanager.util.DBUtil;
 import com.example.schedulemanager.util.RecyclerViewListener;
 import com.example.schedulemanager.util.UtilClass;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.litepal.crud.DataSupport;
-import org.litepal.tablemanager.Connector;
 
 import java.util.List;
 
@@ -43,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public Button btnDeleteExpireSchedule;
     public Button btnMaintainSchedule;
     public RadioButton radioAddSchedule;
+    public ImageView imgIsGrid;
 
 
     public RecyclerView recyclerViewSchedule;
@@ -51,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Message message;
     private Intent intent;
+    private boolean layoutIsGrid;
 
     public static final int KEY_ADD_SCHEDULE = 1;
     public static final int KEY_DELETE_SCHEDULE = 2;
@@ -60,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int KEY_MAINTAIN_SCHEDULE = 6;
     public static final int KEY_CREATE_ALTER_DIALOG = 7;
     public static final int KEY_GO_TO_DETAIL_INFO = 8;
+    public static final int KEY_UPDATE_IMG = 9;
 
     public Handler handler = new Handler() {
         @Override
@@ -76,6 +76,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case KEY_GO_TO_DETAIL_INFO:
                     goScheduleDetailActivity((Integer) msg.obj);
+                    break;
+                case KEY_UPDATE_IMG:
+                    if (getCurrentSwitch()) {
+                        imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted);
+                        setCurrentSwitch(false);
+                        updateUI();
+                    } else {
+                        imgIsGrid.setBackgroundResource(R.drawable.ic_view_module);
+                        setCurrentSwitch(true);
+                        updateUI();
+                    }
                     break;
             }
         }
@@ -135,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        layoutIsGrid = getCurrentSwitch();
         updateUI();
     }
 
@@ -146,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnDeleteExpireSchedule = (Button) this.findViewById(R.id.btn_delete_expire_schedule);
         btnMaintainSchedule = (Button) this.findViewById(R.id.btn_maintain_schedule);
         radioAddSchedule = (RadioButton) this.findViewById(R.id.radio);
+
         radioAddSchedule.setOnClickListener(this);
         btnAddSchedule.setOnClickListener(this);
         btnDeleteSchedule.setOnClickListener(this);
@@ -154,8 +167,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnDeleteExpireSchedule.setOnClickListener(this);
         btnMaintainSchedule.setOnClickListener(this);
 
+        imgIsGrid = (ImageView) this.findViewById(R.id.img_grid);
+        if (getCurrentSwitch()) {
+            imgIsGrid.setBackgroundResource(R.drawable.ic_view_module);
+        } else {
+            imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted);
+        }
+
+        imgIsGrid.setOnClickListener(this);
+
         recyclerViewSchedule = (RecyclerView) this.findViewById(R.id.list_schedule);
-        recyclerViewSchedule.setNestedScrollingEnabled(false); // 使滑动效果是跟随ScrollView去滑动
+        //recyclerViewSchedule.setNestedScrollingEnabled(false); // 使滑动效果是跟随ScrollView去滑动
     }
 
     @Override
@@ -179,6 +201,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.radio:
                 message = new Message();
                 message.what = KEY_ADD_SCHEDULE;
+                handler.sendMessage(message);
+                break;
+            case R.id.img_grid:
+                message = new Message();
+                message.what = KEY_UPDATE_IMG;
                 handler.sendMessage(message);
                 break;
         }
@@ -213,10 +240,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 更新界面数据
      */
     public void updateUI() {
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerViewSchedule.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        recyclerViewSchedule.setLayoutManager(manager);
+        if (getCurrentSwitch()) {
+            LinearLayoutManager manager = new LinearLayoutManager(this);
+            manager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerViewSchedule.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+            recyclerViewSchedule.setLayoutManager(manager);
+        } else {
+            GridLayoutManager manager = new GridLayoutManager(this, 2);
+            manager.setOrientation(GridLayoutManager.VERTICAL);
+            recyclerViewSchedule.setLayoutManager(manager);
+        }
         mLists = QueryDb();
         adapter = new ScheduleAdapter(MainActivity.this, mLists);
         recyclerViewSchedule.setAdapter(adapter);
@@ -239,5 +272,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 handler.sendMessage(message);
             }
         });
+    }
+
+    public boolean getCurrentSwitch() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        return prefs.getBoolean("grid", false);
+    }
+
+    public void setCurrentSwitch(boolean b) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
+        editor.putBoolean("grid", b);
+        editor.apply();
     }
 }

@@ -14,6 +14,6 @@
     <dimen name="radiobutton_text_size">10sp</dimen>
     <dimen name="layout_margin_width">60dp</dimen>
     <dimen name="layout_margin_height">60dp</dimen>
-    <dimen name="layout_margin_width_1">48dp</dimen>
-    <dimen name="layout_margin_height_1">48dp</dimen>
+    <dimen name="layout_margin_width_1">36dp</dimen>
+    <dimen name="layout_margin_height_1">36dp</dimen>
 </resources>

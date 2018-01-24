@@ -18,11 +18,12 @@
         tools:ignore="RtlHardcoded" />
 
     <ImageView
-        android:id="@+id/img_save"
+        android:id="@+id/img_grid"
         android:layout_width="@dimen/layout_margin_width_1"
         android:layout_height="@dimen/layout_margin_height_1"
         android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/tv_margin_left_and_right"
         android:padding="@dimen/tv_margin"
-        android:src="@drawable/ic_format_list_bulleted" />
+        tools:ignore="RtlHardcoded" />
 
 </LinearLayout>
