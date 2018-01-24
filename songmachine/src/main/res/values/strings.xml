@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Song Machine</string>
     <string name="app_request_permission_hint">Song Machine</string>
+    <string name="radio_button_left_1_text">Song Machine</string>
+    <string name="radio_button_left_2_text">Song Machine</string>
+    <string name="radio_button_left_3_text">Song Machine</string>
+    <string name="radio_button_left_4_text">Song Machine</string>
+    <string name="radio_button_left_5_text">Song Machine</string>
+    <string name="radio_button_right_1_text">Song Machine</string>
+    <string name="radio_button_right_2_text">Song Machine</string>
+    <string name="radio_button_right_3_text">Song Machine</string>
+    <string name="radio_button_right_4_text">Song Machine</string>
+    <string name="radio_button_right_5_text">Song Machine</string>
 </resources>

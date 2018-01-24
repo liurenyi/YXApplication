@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">点歌机</string>
     <string name="app_request_permission_hint">必须同意所请求的权限，App才可以正常使用</string>
+    <string name="radio_button_left_1_text">首页</string>
+    <string name="radio_button_left_2_text">重唱</string>
+    <string name="radio_button_left_3_text">静音</string>
+    <string name="radio_button_left_4_text">暂停</string>
+    <string name="radio_button_left_5_text">音量</string>
+    <string name="radio_button_right_1_text">切歌</string>
+    <string name="radio_button_right_2_text">伴唱</string>
+    <string name="radio_button_right_3_text">已点</string>
+    <string name="radio_button_right_4_text">气氛</string>
+    <string name="radio_button_right_5_text">返回</string>
 </resources>
