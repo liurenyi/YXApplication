@@ -1,8 +1,11 @@
 package com.example.schedulemanager;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -21,6 +26,8 @@ import com.example.schedulemanager.adapter.ScheduleAdapter;
 import com.example.schedulemanager.database.Schedule;
 import com.example.schedulemanager.util.DBUtil;
 import com.example.schedulemanager.util.RecyclerViewListener;
+import com.example.schedulemanager.util.UtilClass;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
@@ -97,8 +104,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        UtilClass.initSystemBar(MainActivity.this);
         initUI();
-        SQLiteDatabase database = Connector.getDatabase();
+        // 4.4及以上版本开启
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            setTranslucentStatus(true);
+//        }
+//
+//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+//        tintManager.setStatusBarTintEnabled(true);
+//        tintManager.setNavigationBarTintEnabled(true);
+//
+//        // 自定义颜色
+//        tintManager.setTintColor(Color.parseColor("#24b7a4"));
+    }
+
+    @TargetApi(19)
+    private void setTranslucentStatus(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
     }
 
     @Override
