@@ -13,4 +13,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="RadioButton">
+        <item name="android:radius">@dimen/radiobutton_background_corners</item>
+        <item name="android:layout_marginBottom">@dimen/radiobutton_margin_bottom</item>
+        <item name="android:textSize">@dimen/radiobutton_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:button">@null</item>
+    </style>
+
 </resources>

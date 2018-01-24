@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.example.schedulemanager.adapter.ScheduleAdapter;
 import com.example.schedulemanager.database.Schedule;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public Button btnQuerySchedule;
     public Button btnDeleteExpireSchedule;
     public Button btnMaintainSchedule;
+    public RadioButton radioAddSchedule;
+
 
     public RecyclerView recyclerViewSchedule;
     public List<Schedule> mLists;
@@ -110,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnQuerySchedule = (Button) this.findViewById(R.id.btn_query_schedule);
         btnDeleteExpireSchedule = (Button) this.findViewById(R.id.btn_delete_expire_schedule);
         btnMaintainSchedule = (Button) this.findViewById(R.id.btn_maintain_schedule);
+        radioAddSchedule = (RadioButton) this.findViewById(R.id.radio);
+        radioAddSchedule.setOnClickListener(this);
         btnAddSchedule.setOnClickListener(this);
         btnDeleteSchedule.setOnClickListener(this);
         btnModifySchedule.setOnClickListener(this);
@@ -118,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMaintainSchedule.setOnClickListener(this);
 
         recyclerViewSchedule = (RecyclerView) this.findViewById(R.id.list_schedule);
+        recyclerViewSchedule.setNestedScrollingEnabled(false); // 使滑动效果是跟随ScrollView去滑动
     }
 
     @Override
@@ -137,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_modify_schedule:
                 break;
             case R.id.btn_query_schedule:
+                break;
+            case R.id.radio:
+                message = new Message();
+                message.what = KEY_ADD_SCHEDULE;
+                handler.sendMessage(message);
                 break;
         }
     }

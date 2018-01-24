@@ -1,82 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.schedulemanager.MainActivity">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linear_btn"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_add_schedule"
-            android:layout_width="0dp"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_add_schedule" />
+            tools:context="com.example.schedulemanager.MainActivity">
 
-        <Button
-            android:id="@+id/btn_delete_schedule"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_delete_schedule" />
 
-        <Button
-            android:id="@+id/btn_modify_schedule"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_modify_schedule" />
+            <LinearLayout
+                android:id="@+id/linear_btn"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-        <Button
-            android:id="@+id/btn_query_schedule"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_query_schedule" />
+                <Button
+                    android:id="@+id/btn_add_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_add_schedule" />
 
-        <Button
-            android:id="@+id/btn_delete_expire_schedule"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_delete_expire_schedule" />
+                <Button
+                    android:id="@+id/btn_delete_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_delete_schedule" />
 
-        <Button
-            android:id="@+id/btn_maintain_schedule"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_text_maintain_schedule" />
+                <Button
+                    android:id="@+id/btn_modify_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_modify_schedule" />
 
-    </LinearLayout>
+                <Button
+                    android:id="@+id/btn_query_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_query_schedule" />
 
-    <TextView
-        android:id="@+id/schedule_lable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_btn"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="已有日程"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp" />
+                <Button
+                    android:id="@+id/btn_delete_expire_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_delete_expire_schedule" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_schedule"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/schedule_lable" />
+                <Button
+                    android:id="@+id/btn_maintain_schedule"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_text_maintain_schedule" />
 
-</RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/schedule_lable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linear_btn"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="已有日程"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/schedule_lable" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RadioButton
+        android:id="@+id/radio"
+        style="@style/RadioButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/radio_background"
+        android:drawableTop="@drawable/ic_add"
+        android:text="@string/radio_text_add_schedule"
+        tools:ignore="SmallSp" />
+
+</FrameLayout>
