@@ -5,6 +5,7 @@
     <string name="radio_button_left_2_text">重唱</string>
     <string name="radio_button_left_3_text">静音</string>
     <string name="radio_button_left_4_text">暂停</string>
+    <string name="radio_button_left_4_text_1">播放</string>
     <string name="radio_button_left_5_text">音量</string>
     <string name="radio_button_right_1_text">切歌</string>
     <string name="radio_button_right_2_text">伴唱</string>
