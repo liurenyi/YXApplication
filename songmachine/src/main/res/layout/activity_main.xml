@@ -19,7 +19,22 @@
 
     </FrameLayout>
 
+
     <RelativeLayout
+        android:id="@+id/part_2"
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_above="@+id/part_1">
+
+        <include
+            layout="@layout/activity_main_part_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/part_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">

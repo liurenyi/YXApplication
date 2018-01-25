@@ -6,4 +6,7 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorIcon">#cc99aa</color>
     <color name="colorBlue">#33ffff</color>
+    <color name="colorRGB1">#cccccc</color>
+    <color name="colorRGB2">#4474bb</color>
+    <color name="colorRGB3">#4D8AB3</color>
 </resources>

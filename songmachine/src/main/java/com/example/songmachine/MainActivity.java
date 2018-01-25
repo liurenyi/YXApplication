@@ -3,7 +3,6 @@ package com.example.songmachine;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,17 +14,22 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.songmachine.adapter.RecyclerAdapter;
 import com.example.songmachine.util.StorageCManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener, View.OnClickListener {
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private static final int KEY_MAIN_VIDEO_PLAYING = 2;
     private static final int KEY_MAIN_VIDEO_PAUSE = 3;
     private static final int KEY_MAIN_VIDEO_REPLAY = 4; // 重唱指令
+    private static final int KEY_UPDATE_ITEM = 5;
 
     public VideoView mVideoVie;
     public RadioButton mRadioButton1;
@@ -47,9 +52,13 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     public RadioButton mRadioButton8;
     public RadioButton mRadioButton9;
     public RadioButton mRadioButton10;
+    public RecyclerView mRecyclerView;
 
+    private RecyclerAdapter adapter;
     private Bitmap bitmap;
     private Message message;
+
+    private List<Map<Object, Object>> mapList = new ArrayList<>();
 
 
     private Handler handler = new Handler() {
@@ -65,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                     break;
                 case KEY_MAIN_VIDEO_REPLAY:
                     goReplay();
+                    break;
+                case KEY_UPDATE_ITEM:
+                    adapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -101,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initData();
         initUI();
         // 当系统为6.0及以上，检查App权限
         if (Build.VERSION.SDK_INT >= 23) {
@@ -162,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         mRadioButton9.setOnClickListener(this);
         mRadioButton10.setOnClickListener(this);
 
+        mRecyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
+        //LinearLayoutManager manager = new LinearLayoutManager(this);
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(manager);
+        adapter = new RecyclerAdapter(MainActivity.this, mapList);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 15, true));
     }
 
     /**
@@ -222,7 +242,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
      */
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        mVideoVie.stopPlayback();
+        //mVideoVie.stopPlayback();
+        mVideoVie.start();
     }
 
     /**
@@ -298,6 +319,29 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         } else {
             Toast.makeText(MainActivity.this, "视频文件不存在", Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * 做测试专用的数据
+     */
+    private void initData() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    Map<Object, Object> map = new HashMap<>();
+                    map.put("image", StorageCManager.createVideoThumbnail(StorageCManager.filePath));
+                    mapList.add(map);
+                    if (i % 9 == 0) {
+                        message = new Message();
+                        message.what = KEY_UPDATE_ITEM;
+                        handler.sendMessage(message);
+                    }
+                }
+            }
+        }).start();
+
     }
 
 }
