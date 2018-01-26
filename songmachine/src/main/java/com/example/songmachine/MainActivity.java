@@ -1,6 +1,7 @@
 package com.example.songmachine;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -185,7 +186,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         adapter.setOnItemClickListener(new RecyclerAdapterListener.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, getString(R.string.adapter_click_alert_text, (position + 1) + ""), Toast.LENGTH_SHORT).show();
             }
         });
     }
