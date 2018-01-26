@@ -11,4 +11,5 @@
     <string name="radio_button_right_3_text">Song Machine</string>
     <string name="radio_button_right_4_text">Song Machine</string>
     <string name="radio_button_right_5_text">Song Machine</string>
+    <string name="text_video_time_text">00:00</string>
 </resources>

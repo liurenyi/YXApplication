@@ -2,6 +2,7 @@ package com.example.songmachine;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private static final int KEY_MAIN_VIDEO_PAUSE = 3;
     private static final int KEY_MAIN_VIDEO_REPLAY = 4; // 重唱指令
     private static final int KEY_UPDATE_ITEM = 5;
+    private static final int KEY_START_FLOATWINDOWS = 6;
 
     public VideoView mVideoVie;
     public RadioButton mRadioButton1;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private RecyclerAdapter adapter;
     private Bitmap bitmap;
     private Message message;
+    private Intent intent;
 
     private List<Map<Object, Object>> mapList = new ArrayList<>();
 
@@ -79,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 case KEY_UPDATE_ITEM:
                     adapter.notifyDataSetChanged();
                     break;
+                case KEY_START_FLOATWINDOWS:
+                    intent = new Intent(MainActivity.this, FloatWindowService.class);
+                    startService(intent);
+                    break;
+
             }
         }
     };
@@ -187,7 +195,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
             @Override
             public void OnItemClick(View view, int position) {
                 //Toast.makeText(MainActivity.this, "第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
-                //Toast.makeText(MainActivity.this, getString(R.string.adapter_click_alert_text, (position + 1) + ""), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(MainActivity.this, getString(R.string.adapter_click_alert_text, (position + 1) + ""),
+                 Toast.LENGTH_SHORT).show();*/
+                message = new Message();
+                message.what = KEY_START_FLOATWINDOWS;
+                handler.sendMessage(message);
             }
         });
     }
@@ -287,7 +299,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 /*mRadioButton4.setCompoundDrawables(null,
                         mVideoVie.isPlaying() ? getResources().getDrawable(R.drawable.ic_pause_circle_outline) :
                                 getResources().getDrawable(R.drawable.ic_play_arrow), null, null);*/
-                //mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_play_arrow), null, null);
+                /*mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().
+                getDrawable(R.drawable.ic_play_arrow), null, null);*/
                 mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
                         mVideoVie.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow) :
                                 getResources().getDrawable(R.drawable.ic_pause_circle_outline), null, null);
