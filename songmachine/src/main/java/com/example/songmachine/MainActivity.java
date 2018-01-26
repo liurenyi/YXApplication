@@ -182,6 +182,12 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         adapter = new RecyclerAdapter(MainActivity.this, mapList);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 15, true));
+        adapter.setOnItemClickListener(new RecyclerAdapterListener.OnItemClickListener() {
+            @Override
+            public void OnItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

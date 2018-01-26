@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.songmachine.R;
+import com.example.songmachine.RecyclerAdapterListener;
 import com.example.songmachine.log.Logw;
 
 import java.util.List;
@@ -24,6 +25,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     private LayoutInflater layoutInflater;
     private List<Map<Object, Object>> mapList;
+    private RecyclerAdapterListener.OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(RecyclerAdapterListener.OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     public RecyclerAdapter(Context context, List<Map<Object, Object>> mapList) {
         this.layoutInflater = LayoutInflater.from(context);
@@ -42,9 +48,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Logw.i("liu","-------");
-        holder.imgVideo.setImageBitmap((Bitmap)mapList.get(position).get("image"));
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        Logw.i("liu", "-------");
+        holder.imgVideo.setImageBitmap((Bitmap) mapList.get(position).get("image"));
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.OnItemClick(view, position);
+                }
+            });
+        }
     }
 
     @Override
