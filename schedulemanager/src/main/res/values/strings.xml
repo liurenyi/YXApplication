@@ -7,4 +7,8 @@
     <string name="btn_text_maintain_schedule">维护日程</string>
     <string name="btn_text_delete_expire_schedule">删除过期日程</string>
     <string name="radio_text_add_schedule">新增</string>
+    <string name="tv_add_schedule_text_1">新建日程</string>
+    <string name="tv_add_schedule_text_2">类型</string>
+    <string name="tv_add_schedule_text_3">主题</string>
+    <string name="tv_add_schedule_text_4">备注</string>
 </resources>

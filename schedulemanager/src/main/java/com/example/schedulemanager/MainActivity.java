@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void createDialog(final int id) {
-        new AlertDialog.Builder(MainActivity.this).setTitle("警告").setMessage("是否删除选中数据").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(MainActivity.this).setMessage("是否删除选中数据").setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 DBUtil.deleteData(Schedule.class, id); // 执行删除操作

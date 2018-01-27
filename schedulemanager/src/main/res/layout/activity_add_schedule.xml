@@ -21,7 +21,7 @@
         android:gravity="center"
         android:paddingBottom="@dimen/tv_margin_bottom"
         android:paddingTop="@dimen/tv_margin_top"
-        android:text="新建日程"
+        android:text="@string/tv_add_schedule_text_1"
         android:textColor="@color/colorPrimary"
         android:textSize="20sp" />
 
@@ -38,9 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:text="类型" />
+            android:padding="@dimen/tv_margin"
+            android:text="@string/tv_add_schedule_text_2" />
 
         <Spinner
             android:id="@+id/spinner"
@@ -49,12 +48,6 @@
             android:layout_weight="1"
             android:background="@drawable/edit_background"
             android:entries="@array/spinner_type" />
-
-        <Button
-            android:id="@+id/btn_type_manager"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="类型管理" />
 
     </LinearLayout>
 
@@ -71,9 +64,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:text="主题"
+            android:padding="@dimen/tv_margin"
+            android:text="@string/tv_add_schedule_text_3"
             tools:ignore="RtlHardcoded" />
 
         <EditText
@@ -100,9 +92,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
-            android:text="备注"
+            android:padding="@dimen/tv_margin"
+            android:text="@string/tv_add_schedule_text_4"
             tools:ignore="RtlHardcoded" />
 
         <EditText
@@ -111,8 +102,7 @@
             android:layout_height="200dp"
             android:background="@drawable/edit_background"
             android:gravity="left|top"
-            android:paddingLeft="@dimen/tv_margin_left"
-            android:paddingRight="@dimen/tv_margin_right"
+            android:padding="@dimen/tv_margin"
             tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
