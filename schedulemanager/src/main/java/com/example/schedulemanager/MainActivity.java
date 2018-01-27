@@ -26,6 +26,7 @@ import com.example.schedulemanager.database.Schedule;
 import com.example.schedulemanager.util.DBUtil;
 import com.example.schedulemanager.util.RecyclerViewListener;
 import com.example.schedulemanager.util.UtilClass;
+import com.example.yxapplication.recycle.util.GridSpacingItemDecoration;
 
 import org.litepal.crud.DataSupport;
 
@@ -116,7 +117,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         UtilClass.initSystemBar(MainActivity.this);
+        gItemDecoration = new GridSpacingItemDecoration(2, 15, true);
+        itemDecoration = new DividerItemDecoration(MainActivity.this, LinearLayoutManager.VERTICAL);
         initUI();
+
         // 4.4及以上版本开启
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //            setTranslucentStatus(true);
@@ -236,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).show();
     }
 
+    private GridSpacingItemDecoration gItemDecoration;
+    private DividerItemDecoration itemDecoration;
+
     /**
      * 更新界面数据
      */
@@ -243,15 +250,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (getCurrentSwitch()) {
             LinearLayoutManager manager = new LinearLayoutManager(this);
             manager.setOrientation(LinearLayoutManager.VERTICAL);
-            recyclerViewSchedule.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
             recyclerViewSchedule.setLayoutManager(manager);
+            // 要移除分割线，否则item会不断变大
+            recyclerViewSchedule.removeItemDecoration(gItemDecoration);
+            recyclerViewSchedule.removeItemDecoration(itemDecoration);
+            recyclerViewSchedule.addItemDecoration(itemDecoration);
         } else {
             GridLayoutManager manager = new GridLayoutManager(this, 2);
             manager.setOrientation(GridLayoutManager.VERTICAL);
             recyclerViewSchedule.setLayoutManager(manager);
+            // 要移除分割线，否则item会不断变大
+            recyclerViewSchedule.removeItemDecoration(itemDecoration);
+            recyclerViewSchedule.removeItemDecoration(gItemDecoration);
+            recyclerViewSchedule.addItemDecoration(gItemDecoration);
         }
         mLists = QueryDb();
-        adapter = new ScheduleAdapter(MainActivity.this, mLists);
+        adapter = new ScheduleAdapter(MainActivity.this, mLists, getCurrentSwitch());
         recyclerViewSchedule.setAdapter(adapter);
         // item的回调事件
         adapter.setListener(new RecyclerViewListener.OnItemClickListener() {
