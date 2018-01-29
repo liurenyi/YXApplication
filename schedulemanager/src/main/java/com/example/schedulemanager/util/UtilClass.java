@@ -144,6 +144,14 @@ public class UtilClass {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
+    public static int getNowHour() {
+        return calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getNowMinute() {
+        return calendar.get(Calendar.MINUTE);
+    }
+
     public static String getNowDate() {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek == 1) {

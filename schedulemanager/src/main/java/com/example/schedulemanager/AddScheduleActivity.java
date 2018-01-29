@@ -25,10 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.schedulemanager.database.Schedule;
 import com.example.schedulemanager.database.ScheduleType;
+import com.example.schedulemanager.util.AlarmRemind;
 import com.example.schedulemanager.util.UtilClass;
 
 import java.lang.reflect.Field;
@@ -41,6 +43,8 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     public ImageView imgOK;
     public ImageView imgCancle;
     public Button btnAlert;
+    public Button btnBack;
+    public Button btnSure;
     public String themeString;
     public String remarksString;
     public String typeString;
@@ -49,7 +53,13 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     public Dialog mDialog;
     public View view;
     public DatePicker datePicker;
+    public TimePicker timePicker;
     public TextView tvSetTime;
+    private int mCurrentYear;
+    private int mCurrentMonth;
+    private int mCurrentDay;
+    private int mCurrentHour;
+    private int mCurrentMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,9 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initUI() {
+        mCurrentYear = UtilClass.getNowYear();
+        mCurrentMonth = UtilClass.getNowMonth();
+        mCurrentDay = UtilClass.getNowDat();
         edtRemarks = (EditText) this.findViewById(R.id.edt_remark);
         edtTheme = (EditText) this.findViewById(R.id.edt_theme);
         edtTheme.addTextChangedListener(new ThemeTextWatcher());
@@ -96,6 +109,13 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
             case R.id.btn_alert:
                 setAlarmAlert();
                 break;
+            case R.id.btn_back:
+                break;
+            case R.id.btn_sure:
+                AlarmRemind.startRemind(AddScheduleActivity.this, mCurrentYear, mCurrentMonth, mCurrentDay,
+                        mCurrentHour, mCurrentMinute);
+                Log.e("liu", mCurrentYear + "-" + mCurrentMonth + "-" + mCurrentDay + " " + mCurrentHour + ":" + mCurrentMinute);
+                break;
         }
     }
 
@@ -106,7 +126,12 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         mDialog = new Dialog(this, R.style.ActionSheetDialogStyle);
         view = LayoutInflater.from(this).inflate(R.layout.layout_alarm_alert, null);
         datePicker = view.findViewById(R.id.dateAndTimePicker_datePicker);
+        timePicker = view.findViewById(R.id.dateAndTimePicker_timePicker);
+        btnBack = view.findViewById(R.id.btn_back);
+        btnSure = view.findViewById(R.id.btn_sure);
         tvSetTime = view.findViewById(R.id.tv_current_set_time);
+        btnBack.setOnClickListener(this);
+        btnSure.setOnClickListener(this);
         tvSetTime.setText(getResources().getString(R.string.tv_set_alarm_time_text, UtilClass.getNowYear(),
                 UtilClass.getNowMonth() + 1, UtilClass.getNowDat()));
         tvSetTime.append(UtilClass.getNowDate());
@@ -114,10 +139,22 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
             // 隐藏掉年份显示，隐藏月份显示只需把最后一个getChildAt值设置为1即可
             ((ViewGroup) ((ViewGroup) datePicker.getChildAt(0)).getChildAt(0)).getChildAt(0).setVisibility(View.GONE);
         }
-        //setDatePickerDividerColor(datePicker);
+        mCurrentHour = timePicker.getCurrentHour(); //初始化时间
+        mCurrentMinute = timePicker.getCurrentMinute(); //初始化时间
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
+                mCurrentHour = i;
+                mCurrentMinute = i1;
+            }
+        });
+        //setDatePickerDividerColor(datePicker); // 设置日期选择器中间的间隔线的颜色
         datePicker.init(UtilClass.getNowYear(), UtilClass.getNowMonth(), UtilClass.getNowDat(), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                mCurrentYear = i;
+                mCurrentMonth = i1;
+                mCurrentDay = i2;
                 tvSetTime.setText(getResources().getString(R.string.tv_set_alarm_time_text, i, i1 + 1, i2));
                 tvSetTime.append(UtilClass.getAppointedDate(i, i1, i2));
             }
