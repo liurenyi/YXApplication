@@ -7,6 +7,7 @@
     <string name="btn_text_maintain_schedule">维护日程</string>
     <string name="btn_text_delete_expire_schedule">删除过期日程</string>
     <string name="radio_text_add_schedule">新增</string>
+    <string name="radio_text_alarm_alert">提醒</string>
     <string name="tv_add_schedule_text_1">新建日程</string>
     <string name="tv_add_schedule_text_2">类型</string>
     <string name="tv_add_schedule_text_3">主题</string>
@@ -14,4 +15,6 @@
     <string name="tv_set_alarm_time_text">%1$d年%2$d月%3$d日</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_ok">确定</string>
+    <string name="alert_theme_text">必须输入主题</string>
+    <string name="settings_save_ok">保存成功</string>
 </resources>

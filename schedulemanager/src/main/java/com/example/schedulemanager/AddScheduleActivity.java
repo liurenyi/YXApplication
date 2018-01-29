@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -42,7 +43,7 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
     public Spinner spinner;
     public ImageView imgOK;
     public ImageView imgCancle;
-    public Button btnAlert;
+    public RadioButton rbtnAlert;
     public Button btnBack;
     public Button btnSure;
     public String themeString;
@@ -93,8 +94,8 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
-        btnAlert = (Button) this.findViewById(R.id.btn_alert);
-        btnAlert.setOnClickListener(this);
+        rbtnAlert = (RadioButton) this.findViewById(R.id.radio_alert);
+        rbtnAlert.setOnClickListener(this);
     }
 
     @Override
@@ -106,15 +107,15 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
             case R.id.img_back:
                 finish();
                 break;
-            case R.id.btn_alert:
+            case R.id.radio_alert:
                 setAlarmAlert();
                 break;
             case R.id.btn_back:
+                mDialog.dismiss();
                 break;
             case R.id.btn_sure:
-                AlarmRemind.startRemind(AddScheduleActivity.this, mCurrentYear, mCurrentMonth, mCurrentDay,
+                AlarmRemind.startRemind(AddScheduleActivity.this, mDialog, mCurrentYear, mCurrentMonth, mCurrentDay,
                         mCurrentHour, mCurrentMinute);
-                Log.e("liu", mCurrentYear + "-" + mCurrentMonth + "-" + mCurrentDay + " " + mCurrentHour + ":" + mCurrentMinute);
                 break;
         }
     }
@@ -127,6 +128,7 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         view = LayoutInflater.from(this).inflate(R.layout.layout_alarm_alert, null);
         datePicker = view.findViewById(R.id.dateAndTimePicker_datePicker);
         timePicker = view.findViewById(R.id.dateAndTimePicker_timePicker);
+        // timePicker.setIs24HourView(true); //设置为24小时制
         btnBack = view.findViewById(R.id.btn_back);
         btnSure = view.findViewById(R.id.btn_sure);
         tvSetTime = view.findViewById(R.id.tv_current_set_time);
@@ -167,7 +169,7 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
             window.setGravity(Gravity.BOTTOM);
         }
         WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.width = display.getWidth() - 40;   // 弹出框宽度与屏幕宽度一致
+        layoutParams.width = display.getWidth();   // 弹出框宽度与屏幕宽度一致
         window.setAttributes(layoutParams);
 
         window.setBackgroundDrawableResource(R.drawable.layout_dialog_pop_background); // dialog的背景
@@ -185,11 +187,11 @@ public class AddScheduleActivity extends AppCompatActivity implements View.OnCli
         mShedule.setDate(UtilClass.getCurrentDate());
         mShedule.setTime(UtilClass.getCurrentTime());
         if (themeString == null) {
-            Toast.makeText(this, "必须输入主题", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.alert_theme_text), Toast.LENGTH_SHORT).show();
             return;
         } else {
             mShedule.save();
-            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.settings_save_ok), Toast.LENGTH_SHORT).show();
             finish();
         }
 

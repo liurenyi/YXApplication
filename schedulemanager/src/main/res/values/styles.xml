@@ -48,6 +48,7 @@
     </style>
 
     <style name="LryButton">
+        <item name="android:background">@drawable/btn_picker_bakcgorund</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_width">0dp</item>

@@ -7,6 +7,23 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.schedulemanager.AddScheduleActivity">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RadioButton
+            android:id="@+id/radio_alert"
+            style="@style/RadioButton"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/radio_background"
+            android:drawableTop="@drawable/ic_add_alert"
+            android:text="@string/radio_text_alarm_alert"
+            tools:ignore="SmallSp" />
+
+    </FrameLayout>
+
     <include
         android:id="@+id/schedule_lable_id"
         layout="@layout/schedule_lable_title"
@@ -106,12 +123,5 @@
             tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_alert"
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/linear_detail"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"/>
 
 </RelativeLayout>

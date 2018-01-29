@@ -1,6 +1,7 @@
 package com.example.schedulemanager.util;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +28,7 @@ public class AlarmRemind {
      *
      * @param context
      */
-    public static void startRemind(Context context, int year, int month, int day, int hour, int minute) {
+    public static void startRemind(Context context, Dialog dialog, int year, int month, int day, int hour, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         long timeMillis = System.currentTimeMillis();
@@ -87,6 +88,8 @@ public class AlarmRemind {
          * 第三个参数是重复周期，也就是下次提醒的间隔 毫秒值 我这里是一天后提醒
          */
         //am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), (1000 * 60 * 60 * 24), pi);
+
+        dialog.dismiss(); // 设置完成之后弹出框消失
     }
 
     /**
