@@ -1,10 +1,11 @@
 package com.example.songmachine;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.hardware.display.DisplayManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -12,19 +13,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.songmachine.adapter.RecyclerAdapter;
+import com.example.songmachine.display.DifferentDislay;
+import com.example.songmachine.log.Logw;
 import com.example.songmachine.util.StorageCManager;
 
 import java.io.File;
@@ -61,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private Bitmap bitmap;
     private Message message;
     private Intent intent;
+    private DisplayManager mDisplayManager;
+    private Display[] mDisplays;
+    private DifferentDislay mDifferentDislay;
 
     private List<Map<Object, Object>> mapList = new ArrayList<>();
 
@@ -83,13 +92,40 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                     adapter.notifyDataSetChanged();
                     break;
                 case KEY_START_FLOATWINDOWS:
-                    intent = new Intent(MainActivity.this, FloatWindowService.class);
-                    startService(intent);
+                    // 开启悬浮窗之前先请求权限
+                    askForPermission();
                     break;
 
             }
         }
     };
+
+    private void startFService() {
+        intent = new Intent(MainActivity.this, FloatWindowService.class);
+        startService(intent);
+    }
+
+    private void askForPermission() {
+        if (!Settings.canDrawOverlays(this)) {
+            Toast.makeText(MainActivity.this, "当前无权限，请授权！", Toast.LENGTH_SHORT).show();
+            intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 1111);
+        } else {
+            startFService(); // 开启悬浮窗的服务
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1111) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(MainActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "权限授予成功！", Toast.LENGTH_SHORT).show();
+                startFService();
+            }
+        }
+    }
 
     /**
      * 重新开始唱歌
@@ -127,7 +163,14 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         // 当系统为6.0及以上，检查App权限
         if (Build.VERSION.SDK_INT >= 23) {
             checkAppPermission();
+            askForPermission();
         }
+        mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
+        mDisplays = mDisplayManager.getDisplays();
+        Logw.d("liu", "mDisplays: " + mDisplays.toString() + " lenght: " + mDisplays.length);
+        mDifferentDislay = new DifferentDislay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
+        mDifferentDislay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        mDifferentDislay.show();
     }
 
     @Override
