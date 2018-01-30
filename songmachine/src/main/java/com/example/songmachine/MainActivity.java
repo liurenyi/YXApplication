@@ -20,7 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,8 +29,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.songmachine.adapter.RecyclerAdapter;
-import com.example.songmachine.display.DifferentDislay;
-import com.example.songmachine.log.Logw;
+import com.example.songmachine.display.DifferentDisplay;
 import com.example.songmachine.util.StorageCManager;
 
 import java.io.File;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private Intent intent;
     private DisplayManager mDisplayManager;
     private Display[] mDisplays;
-    private DifferentDislay mDifferentDislay;
+    private DifferentDisplay mDifferentDislay;
 
     private List<Map<Object, Object>> mapList = new ArrayList<>();
 
@@ -97,6 +96,16 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                     break;
 
             }
+        }
+    };
+
+    // 此条线程是发送重唱指令
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent(CIntent.ACTION_AGAIN_START);
+            sendBroadcast(intent);
+            Log.e("liu","oooooooo");
         }
     };
 
@@ -167,8 +176,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         }
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
         mDisplays = mDisplayManager.getDisplays();
-        Logw.d("liu", "mDisplays: " + mDisplays.toString() + " lenght: " + mDisplays.length);
-        mDifferentDislay = new DifferentDislay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
+        mDifferentDislay = new DifferentDisplay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
         mDifferentDislay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         mDifferentDislay.show();
     }
@@ -295,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         mVideoVie.start();
+        handler.postDelayed(runnable, 5000); // 做下测试的指令
         //mVideoVie.setBackground(new BitmapDrawable(bitmap)); // 获取要播放的视频的第一帧
     }
 

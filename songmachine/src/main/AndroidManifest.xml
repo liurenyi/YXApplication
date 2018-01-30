@@ -3,6 +3,7 @@
     package="com.example.songmachine">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -23,6 +24,11 @@
             </intent-filter>
         </activity>
         <service android:name="com.example.songmachine.FloatWindowService" />
+        <receiver android:name=".TestBroadCast">
+            <intent-filter>
+                <action android:name="action.again.start" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
