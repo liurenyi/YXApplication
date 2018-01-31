@@ -62,11 +62,19 @@ public class EncapsulateClass {
         return width;
     }
 
+    /**
+     * 增加音乐音量，此处只需要处理音乐的音量就可。
+     * @param context
+     */
     public static void addVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FX_FOCUS_NAVIGATION_UP);
     }
 
+    /**
+     * 减少音乐音量，此处只需要处理音乐的音量就可。
+     * @param context
+     */
     public static void reduceVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FX_FOCUS_NAVIGATION_UP);

@@ -30,6 +30,7 @@ import android.widget.VideoView;
 
 import com.example.songmachine.adapter.RecyclerAdapter;
 import com.example.songmachine.display.DifferentDisplay;
+import com.example.songmachine.util.EncapsulateClass;
 import com.example.songmachine.util.StorageCManager;
 
 import java.io.File;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private static final int KEY_MAIN_VIDEO_REPLAY = 4; // 重唱指令
     private static final int KEY_UPDATE_ITEM = 5;
     private static final int KEY_START_FLOATWINDOWS = 6;
+    private static final int KEY_SHOW_VOLUME_UI = 7; // 调节音量指令
 
     public VideoView mVideoVie;
     public RadioButton mRadioButton1;
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 case KEY_START_FLOATWINDOWS:
                     // 开启悬浮窗之前先请求权限
                     askForPermission();
+                    break;
+                case KEY_SHOW_VOLUME_UI:
+                    EncapsulateClass.addVolume(MainActivity.this); // 增加音量的方法，这里调用系统的音量。有需要可自定义音量条
                     break;
 
             }
@@ -183,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
             checkAppPermission();
             askForPermission();
         }
+        // 实现副屏的功能代码逻辑
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
         mDisplays = mDisplayManager.getDisplays();
         mDifferentDislay = new DifferentDisplay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
@@ -370,6 +376,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 handler.sendMessage(message);
                 break;
             case R.id.radio_left_5:
+                message = new Message();
+                message.what = KEY_SHOW_VOLUME_UI;
+                handler.sendMessage(message);
                 break;
             case R.id.radio_right_1:
                 break;
