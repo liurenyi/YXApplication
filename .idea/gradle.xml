@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/myapplication" />
             <option value="$PROJECT_DIR$/schedulemanager" />
             <option value="$PROJECT_DIR$/songmachine" />
+            <option value="$PROJECT_DIR$/videoencryption" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

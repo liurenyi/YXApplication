@@ -7,24 +7,25 @@ import android.view.WindowManager;
 import com.example.songmachine.log.Logw;
 
 /**
+ * 封装类
  * Created by Administrator on 2018/1/15.
  */
 
 public class EncapsulateClass {
 
-    public static final String TAG = "liu-EncapsulateClass";
-    public static final int A_HOUR = 3600 * 1000;
-    public static final int A_MINUTE = 60 * 1000;
-    public static final int A_SECOND = 1000;
+    private static final String TAG = "liu-EncapsulateClass";
+    private static final int A_HOUR = 3600 * 1000;
+    private static final int A_MINUTE = 60 * 1000;
+    private static final int A_SECOND = 1000;
 
-    public static WindowManager windowManager;
-    public static AudioManager audioManager;
+    private static WindowManager windowManager;
+    private static AudioManager audioManager;
 
     /**
      * 格式化时间
      *
-     * @param time
-     * @return
+     * @param time 时间
+     * @return 返回值
      */
     public static String formatTime(long time) {
         int hour;
@@ -64,7 +65,8 @@ public class EncapsulateClass {
 
     /**
      * 增加音乐音量，此处只需要处理音乐的音量就可。
-     * @param context
+     *
+     * @param context 对象
      */
     public static void addVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -73,7 +75,8 @@ public class EncapsulateClass {
 
     /**
      * 减少音乐音量，此处只需要处理音乐的音量就可。
-     * @param context
+     *
+     * @param context 对象
      */
     public static void reduceVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);

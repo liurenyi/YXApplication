@@ -1,1 +1,1 @@
-include ':app1', ':memorandummanager', ':a2dpdemo', ':bluetoothtest', ':app', ':myapplication', ':floatwindow', ':schedulemanager', ':songmachine'
+include ':app1', ':memorandummanager', ':a2dpdemo', ':bluetoothtest', ':app', ':myapplication', ':floatwindow', ':schedulemanager', ':songmachine', ':videoencryption'
