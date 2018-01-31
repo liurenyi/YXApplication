@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         public void run() {
             Intent intent = new Intent(CIntent.ACTION_AGAIN_START);
             sendBroadcast(intent);
-            Log.e("liu","oooooooo");
+            Log.e("liu", " 发送测试广播");
         }
     };
 
@@ -137,28 +137,37 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     }
 
     /**
-     * 重新开始唱歌
+     * 重新开始唱歌,主屏副屏同步
      */
     private void goReplay() {
-        mVideoVie.seekTo(0);
+        mVideoVie.seekTo(0); // 主屏播放界面重唱
+        if (mDifferentDislay != null) {
+            mDifferentDislay.reset(); // 副屏播放界面重唱
+        }
     }
 
     /**
-     * 开始播放视频
+     * 开始播放视频,主屏副屏同步
      */
     private void goPlaying() {
         if (!mVideoVie.isPlaying() && mVideoVie != null) {
             mVideoVie.start();
             mVideoVie.setBackground(null);
+            if (mDifferentDislay != null) {
+                mDifferentDislay.play();
+            }
         }
     }
 
     /**
-     * 暂停视频
+     * 暂停视频,主屏副屏同步
      */
     private void goPause() {
         if (mVideoVie != null) {
             mVideoVie.pause();
+        }
+        if (mDifferentDislay != null) {
+            mDifferentDislay.pause();
         }
     }
 

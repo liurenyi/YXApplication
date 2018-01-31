@@ -22,14 +22,18 @@ import com.example.songmachine.util.StorageCManager;
 /**
  * 这个类关于副屏幕显示的内容，可在此操作。
  * 广播好像接收不过来
+ * 广播接收不进来，暂时不用广播来进行通信
  * Created by Administrator on 2018/1/26.
  */
 
 public class DifferentDisplay extends Presentation implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
+    public static final String TAG = "liu-DifferentDisplay";
+
     private VideoView vvSecondScreen;
     private Context context;
     private static Message message;
+    private OrderBroadcast receiver;
     private static final int KEY_ACTION_AGAIN_START = 1;
     private static final int KEY_ACTION_MUTE = 2;
     private static final int KEY_ACTION_PAUSE = 3;
@@ -57,17 +61,15 @@ public class DifferentDisplay extends Presentation implements MediaPlayer.OnPrep
     /**
      * 测试方法，测试广播是否通了
      */
-    private void test() {
-        Logw.e("liu","................test"); // 打印不出log
-        Toast.makeText(context,"hahaha",Toast.LENGTH_SHORT).show();
+    public void test() {
         vvSecondScreen.seekTo(0);
+        vvSecondScreen.pause();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.different_dispaly);
-        Logw.e("liu","................test");
         init();
         registerBroadcast();
     }
@@ -87,6 +89,7 @@ public class DifferentDisplay extends Presentation implements MediaPlayer.OnPrep
      */
     private void registerBroadcast() {
         IntentFilter filter = new IntentFilter();
+        receiver = new OrderBroadcast();
         filter.addAction(CIntent.ACTION_AGAIN_START);
         filter.addAction(CIntent.ACTION_ACCOMPANIMENT);
         filter.addAction(CIntent.ACTION_ATMOSPHERE);
@@ -100,28 +103,30 @@ public class DifferentDisplay extends Presentation implements MediaPlayer.OnPrep
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        Logw.e("liu", "--->onCompletion()");
+        Logw.e(TAG, "--->onCompletion()");
     }
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Logw.e("liu", "--->onError()");
+        Logw.e(TAG, "--->onError()");
         return false;
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        Logw.e("liu", "--->onPrepared()");
+        Logw.e(TAG, "--->onPrepared()");
         vvSecondScreen.start();
     }
 
     /**
-     * 广播事件，主屏幕点击静音，音量加，气氛等功能时候，此时接到指令进行相应的操作
+     * 接收指令的广播
      */
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private class OrderBroadcast extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Logw.i(TAG, "action: " + action + "-------");
             if (CIntent.ACTION_ACCOMPANIMENT.equals(action)) {
                 message = new Message();
                 message.what = KEY_ACTION_AGAIN_START;
@@ -152,11 +157,47 @@ public class DifferentDisplay extends Presentation implements MediaPlayer.OnPrep
                 handler.sendMessage(message);
             }
         }
-    };
+    }
 
     @Override
     public void onDisplayRemoved() {
         super.onDisplayRemoved();
         context.unregisterReceiver(receiver); // 解除注册
     }
+
+    /**
+     * 暂停视频播放
+     */
+    public void pause() {
+        if (vvSecondScreen == null) {
+            Logw.e(TAG, "vvSecondScreen is null");
+            return;
+        }
+        if (vvSecondScreen.isPlaying()) { // 如果正在播放时候，则暂停
+            vvSecondScreen.pause();
+        }
+    }
+
+    /**
+     * 视频从头开始
+     */
+    public void reset() {
+        if (vvSecondScreen == null) {
+            Logw.e(TAG, "vvSecondScreen is null");
+            return;
+        }
+        vvSecondScreen.seekTo(0);
+    }
+
+    public void play() {
+        if (vvSecondScreen == null) {
+            Logw.e(TAG, "vvSecondScreen is null");
+            return;
+        }
+        if (!vvSecondScreen.isPlaying()) { //如果不再播放状态，则开始播放
+            vvSecondScreen.start();
+        }
+    }
+
+
 }
