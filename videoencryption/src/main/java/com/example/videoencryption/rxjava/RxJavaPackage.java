@@ -57,7 +57,7 @@ public class RxJavaPackage {
                 });
     }
 
-    private static Observable<File> listFiles(File file) {
+    public static Observable<File> listFiles(File file) {
         if (file.isDirectory()) {
             return Observable.from(file.listFiles()).flatMap(new Func1<File, Observable<File>>() {
                 @Override

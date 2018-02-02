@@ -27,11 +27,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //编译RxJava所需依赖
+    //编译RxAndroid所需依赖
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
-    //编译RxJava所需依赖
     compile 'io.reactivex:rxjava:1.0.14'
-    //编译RxAndroid所需依赖
     compile 'io.reactivex:rxandroid:1.0.1'
     testCompile 'junit:junit:4.12'
 }

@@ -3,6 +3,7 @@ package com.example.videoencryption.rxjava;
 import android.util.Log;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -27,7 +28,7 @@ public class FileJudgment {
      * @return 返回后缀名
      */
     private static String getFileExtension(File file) {
-        Log.e("liu","file" + file);
+        Log.e("liu", "file" + file);
         if (file != null) {
             String name = file.getName();
             int i = name.lastIndexOf(".");
@@ -41,6 +42,19 @@ public class FileJudgment {
     public static boolean isVideoFile(File f) {
         String fileExtension = getFileExtension(f);
         return mHashVideo.contains(fileExtension);
+    }
+
+    public static String formatVideoLength(long length) {
+        if (length > 1024 && length < (1024 * 1024)) {
+            return (length / 1024) + "Kb";
+        } else if (length > 1024 * 1024 && length < 1024 * 1024 * 1024) {
+            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            return (decimalFormat.format((double) length / (double) (1024 * 1024))) + "MB";
+        } else if (length > 1024 * 1024 * 1024) {
+            return (length / (1024 * 1024 * 1024)) + "GB";
+        } else {
+            return null;
+        }
     }
 
 }
