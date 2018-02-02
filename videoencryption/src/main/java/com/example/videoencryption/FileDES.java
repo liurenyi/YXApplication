@@ -1,10 +1,16 @@
 package com.example.videoencryption;
 
+import android.util.Log;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -23,6 +29,7 @@ public class FileDES {
     private Key mKey; // 加密解密的key
     private Cipher mDecryptCipher; // 解密的密码
     private Cipher mEncryptCipher; // 加密的密码
+    private static final int REVERSE_LENGTH = 100; // 替换视频的前100个字节。大于2就行
 
     public FileDES(String key) throws Exception {
         initKey(key);
@@ -43,6 +50,7 @@ public class FileDES {
             byteTemp[i] = keyByte[i];
         }
         mKey = new SecretKeySpec(byteTemp, "DES");
+        Log.e(TAG,"mKey: " + mKey);
     }
 
     /***
@@ -135,6 +143,41 @@ public class FileDES {
      */
     public void doDecryptFile(String filePath, String outPath) throws Exception {
         doDecryptFile(new FileInputStream(filePath), outPath);
+    }
+
+    /**
+     * 优化之后的加解密，此加密方法快速
+     * @param strFile 源文件绝对路径
+     * @return
+     */
+    public boolean encrypt(String strFile) {
+        int len = REVERSE_LENGTH;
+        try {
+            File f = new File(strFile);
+            RandomAccessFile raf = new RandomAccessFile(f, "rw");
+            long totalLen = raf.length();
+
+            if (totalLen < REVERSE_LENGTH)
+                len = (int) totalLen;
+
+            FileChannel channel = raf.getChannel();
+            MappedByteBuffer buffer = channel.map(
+                    FileChannel.MapMode.READ_WRITE, 0, REVERSE_LENGTH);
+            byte tmp;
+            for (int i = 0; i < len; ++i) {
+                byte rawByte = buffer.get(i);
+                tmp = (byte) (rawByte ^ i);
+                buffer.put(i, tmp);
+            }
+            buffer.force();
+            buffer.clear();
+            channel.close();
+            raf.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
