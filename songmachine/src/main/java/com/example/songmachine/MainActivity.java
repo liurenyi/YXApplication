@@ -39,6 +39,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener, View.OnClickListener {
 
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
 
     private void startFService() {
         intent = new Intent(MainActivity.this, FloatWindowService.class);
-        startService(intent);
+        // startService(intent); 暂时注释便于调试。
     }
 
     private void askForPermission() {
@@ -181,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initRxJava();
         initData();
         initUI();
         // 当系统为6.0及以上，检查App权限
@@ -193,7 +201,42 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         mDisplays = mDisplayManager.getDisplays();
         mDifferentDislay = new DifferentDisplay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
         mDifferentDislay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        mDifferentDislay.show();
+        // mDifferentDislay.show();  显示副屏，功能已经成功，暂时注释用于调试。
+    }
+
+    /**
+     * 实现RxJava遍历文件中所有视频文件（初始化）
+     */
+    private void initRxJava() {
+        File filePath = new File(StorageCManager.getInnerSDcardPath());
+        Observable.just(filePath).flatMap(new Func1<File, Observable<File>>() {
+            @Override
+            public Observable<File> call(File file) {
+                return EncapsulateClass.listFiles(file);
+            }
+        }).doOnNext(new Action1<File>() {
+            @Override
+            public void call(File file) {
+
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(File file) {
+                String fileName = file.getName();
+                String path = file.getPath();
+                Log.e("liu", "fileName: " + fileName + "\n" + "path: " + path);
+            }
+        });
     }
 
     @Override

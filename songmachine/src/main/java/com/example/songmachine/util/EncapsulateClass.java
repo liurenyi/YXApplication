@@ -6,6 +6,11 @@ import android.view.WindowManager;
 
 import com.example.songmachine.log.Logw;
 
+import java.io.File;
+
+import rx.Observable;
+import rx.functions.Func1;
+
 /**
  * 封装类
  * Created by Administrator on 2018/1/15.
@@ -13,7 +18,7 @@ import com.example.songmachine.log.Logw;
 
 public class EncapsulateClass {
 
-    private static final String TAG = "liu-EncapsulateClass";
+    private static final String TAG = "EncapsulateClass";
     private static final int A_HOUR = 3600 * 1000;
     private static final int A_MINUTE = 60 * 1000;
     private static final int A_SECOND = 1000;
@@ -81,6 +86,30 @@ public class EncapsulateClass {
     public static void reduceVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FX_FOCUS_NAVIGATION_UP);
+    }
+
+    /**
+     * rxjava递归查询内存中的视频文件
+     *
+     * @param file 传进来的file
+     * @return 返回值
+     */
+    public static Observable<File> listFiles(final File file) {
+        if (file.isDirectory()) {
+            return Observable.from(file.listFiles()).flatMap(new Func1<File, Observable<File>>() {
+                @Override
+                public Observable<File> call(File file) {
+                    return listFiles(file);
+                }
+            });
+        } else {
+            return Observable.just(file).filter(new Func1<File, Boolean>() {
+                @Override
+                public Boolean call(File file) {
+                    return file.canRead() && file.exists() && FileFilter.isVideo(file);
+                }
+            });
+        }
     }
 
 }

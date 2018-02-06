@@ -3,6 +3,7 @@ package com.example.songmachine.util;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.example.songmachine.MainActivity;
@@ -44,6 +45,14 @@ public class StorageCManager {
             Logw.e(TAG, "视频文件不存在");
         }
         return bitmap;
+    }
+
+    /**
+     * 获取内部sdcard的根目录
+     * @return 返回根目录
+     */
+    public static String getInnerSDcardPath() {
+        return Environment.getExternalStorageDirectory().getPath();
     }
 
 }
