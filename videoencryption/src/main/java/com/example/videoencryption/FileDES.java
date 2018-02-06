@@ -9,9 +9,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -26,6 +30,7 @@ public class FileDES {
 
     public static final String TAG = "liu-FileDES";
 
+    private static final String KEY_FILE_ENCRYP = "yuxinkeji";
     private Key mKey; // 加密解密的key
     private Cipher mDecryptCipher; // 解密的密码
     private Cipher mEncryptCipher; // 加密的密码
@@ -50,7 +55,6 @@ public class FileDES {
             byteTemp[i] = keyByte[i];
         }
         mKey = new SecretKeySpec(byteTemp, "DES");
-        Log.e(TAG,"mKey: " + mKey);
     }
 
     /***
@@ -62,7 +66,6 @@ public class FileDES {
 
         mDecryptCipher = Cipher.getInstance("DES");
         mDecryptCipher.init(Cipher.DECRYPT_MODE, mKey);
-
     }
 
     /**
@@ -147,28 +150,39 @@ public class FileDES {
 
     /**
      * 优化之后的加解密，此加密方法快速
+     *
      * @param strFile 源文件绝对路径
      * @return
      */
     public boolean encrypt(String strFile) {
         int len = REVERSE_LENGTH;
         try {
+            byte[] bytes = KEY_FILE_ENCRYP.getBytes("UTF-8");
+            Log.e(TAG, "bytes: " + Arrays.toString(bytes));
+
             File f = new File(strFile);
             RandomAccessFile raf = new RandomAccessFile(f, "rw");
             long totalLen = raf.length();
-
             if (totalLen < REVERSE_LENGTH)
                 len = (int) totalLen;
-
-            FileChannel channel = raf.getChannel();
+            raf.seek(totalLen - 1);
+            raf.write(bytes);
+            FileChannel channel = raf.getChannel(); // 获得FileChannel类
             MappedByteBuffer buffer = channel.map(
                     FileChannel.MapMode.READ_WRITE, 0, REVERSE_LENGTH);
             byte tmp;
             for (int i = 0; i < len; ++i) {
                 byte rawByte = buffer.get(i);
-                tmp = (byte) (rawByte ^ i);
+                tmp = (byte) (rawByte ^ i); // 做异或运算
                 buffer.put(i, tmp);
             }
+            MappedByteBuffer buffer1 = channel.map(FileChannel.MapMode.READ_WRITE, 0, totalLen);
+            List<Byte> list = new ArrayList<>();
+            for (int k = (int) (totalLen - 9); k < (int) (totalLen); k++) {
+                byte b = buffer1.get(k);
+                list.add(b);
+            }
+            Log.e(TAG, "list: " + list);
             buffer.force();
             buffer.clear();
             channel.close();

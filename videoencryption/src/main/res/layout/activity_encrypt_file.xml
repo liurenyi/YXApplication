@@ -5,4 +5,9 @@
     android:layout_height="match_parent"
     tools:context="com.example.videoencryption.rxjava.EncryptFileActivity">
 
+    <com.example.videoencryption.rxjava.MyVideoView
+        android:id="@+id/video_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>
