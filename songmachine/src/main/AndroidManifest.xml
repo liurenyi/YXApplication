@@ -16,19 +16,23 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <service android:name=".FloatWindowService" />
+
+        <receiver android:name=".TestBroadCast">
+            <intent-filter>
+                <action android:name="action.again.start" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.example.songmachine.FloatWindowService" />
-        <receiver android:name=".TestBroadCast">
-            <intent-filter>
-                <action android:name="action.again.start" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
