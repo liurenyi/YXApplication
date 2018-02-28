@@ -1,107 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <RadioGroup
-        android:id="@+id/radio_group_left"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <RadioGroup
+            android:id="@+id/radio_group_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="5"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <RadioButton
+
+                android:id="@+id/radio_left_1"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_home"
+                android:text="@string/radio_button_left_1_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_2"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_autorenew"
+                android:text="@string/radio_button_left_2_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_3"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_volume_off"
+                android:text="@string/radio_button_left_3_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_4"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_pause_circle_outline"
+                android:text="@string/radio_button_left_4_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_5"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_volume_up"
+                android:text="@string/radio_button_left_5_text" />
+        </RadioGroup>
+
+        <com.example.songmachine.video.MyVideoView
+            android:id="@+id/video_main"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="3"
+            android:background="@drawable/video_view_background_1"
+            android:paddingBottom="@dimen/layout_margin" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_right"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="5"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <RadioButton
+                android:id="@+id/radio_right_1"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_fast_forward"
+                android:text="@string/radio_button_right_1_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_2"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_queue_music"
+                android:text="@string/radio_button_right_2_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_3"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_check"
+                android:text="@string/radio_button_right_3_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_4"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_brightness_high"
+                android:text="@string/radio_button_right_4_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_5"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_replay"
+                android:text="@string/radio_button_right_5_text" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_song_number"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_weight="5"
-        android:orientation="horizontal"
-        tools:ignore="UselessParent">
+        android:textColor="@color/colorBlue"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/song_number_01"
+        android:layout_marginRight="130dp"
+        android:layout_marginLeft="785dp"
+        android:text="20"/>
 
-        <RadioButton
-
-            android:id="@+id/radio_left_1"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_home"
-            android:text="@string/radio_button_left_1_text" />
-
-        <RadioButton
-            android:id="@+id/radio_left_2"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_autorenew"
-            android:text="@string/radio_button_left_2_text" />
-
-        <RadioButton
-            android:id="@+id/radio_left_3"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_volume_off"
-            android:text="@string/radio_button_left_3_text" />
-
-        <RadioButton
-            android:id="@+id/radio_left_4"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_pause_circle_outline"
-            android:text="@string/radio_button_left_4_text" />
-
-        <RadioButton
-            android:id="@+id/radio_left_5"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_volume_up"
-            android:text="@string/radio_button_left_5_text" />
-    </RadioGroup>
-
-    <com.example.songmachine.video.MyVideoView
-        android:id="@+id/video_main"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_weight="3"
-        android:background="@drawable/video_view_background_1"
-        android:paddingBottom="@dimen/layout_margin" />
-
-    <RadioGroup
-        android:id="@+id/radio_group_right"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_weight="5"
-        android:orientation="horizontal"
-        tools:ignore="UselessParent">
-
-        <RadioButton
-            android:id="@+id/radio_right_1"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_fast_forward"
-            android:text="@string/radio_button_right_1_text" />
-
-        <RadioButton
-            android:id="@+id/radio_right_2"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_queue_music"
-            android:text="@string/radio_button_right_2_text" />
-
-        <RadioButton
-            android:id="@+id/radio_right_3"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_check"
-            android:text="@string/radio_button_right_3_text" />
-
-        <RadioButton
-            android:id="@+id/radio_right_4"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_brightness_high"
-            android:text="@string/radio_button_right_4_text" />
-
-        <RadioButton
-            android:id="@+id/radio_right_5"
-            style="@style/RadioButton"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_replay"
-            android:text="@string/radio_button_right_5_text" />
-    </RadioGroup>
-
-</LinearLayout>
+</FrameLayout>

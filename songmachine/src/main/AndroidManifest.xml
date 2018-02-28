@@ -26,7 +26,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.welcome.WelcomeActivity">
+        <activity android:name=".ui.welcome.WelcomeActivity"></activity>
+        <activity android:name=".ui.welcome.GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

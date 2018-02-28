@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private DifferentDisplay mDifferentDislay;
 
     private List<Map<Object, Object>> mapList = new ArrayList<>();
-    private List<String> allFilePaths = new ArrayList<>(); // 扫描得到所有视频文件的路径集合
 
     private Handler handler = new Handler() {
         @Override
@@ -232,8 +231,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
             @Override
             public void onNext(File file) {
                 String path = file.getPath();
-                Log.e("liu","path: " + path);
-                allFilePaths.add(path);
             }
         });
     }
@@ -256,15 +253,18 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     protected void onDestroy() {
         super.onDestroy();
         mVideoVie.stopPlayback();
+        if (mVideoVie != null) {
+            mVideoVie = null;
+        }
     }
 
     private void initUI() {
         mVideoVie = (VideoView) this.findViewById(R.id.video_main);
         // mVideoVie.setMediaController(new MediaController(this));
-        Log.e("liu", "all_file_path:" + allFilePaths.toString());
+
         Uri uri = Uri.parse("/storage/emulated/0/Movies/爱情留在回忆里.mp4"); // 测试路径
-        //Uri uri = Uri.parse(allFilePaths.get(0)); // 获取扫描结果的第一个视频文件路径
         createVideoThumbnail("/storage/emulated/0/Movies/爱情留在回忆里.mp4");
+
         mVideoVie.setVideoURI(uri);
         mVideoVie.setOnPreparedListener(this);
         mVideoVie.setOnCompletionListener(this);

@@ -63,8 +63,10 @@
         <Button
             android:id="@+id/btn_guide"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_guide_text" />
+            android:layout_height="35dp"
+            android:background="@drawable/btn_guide_background_01"
+            android:text="@string/btn_guide_text"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

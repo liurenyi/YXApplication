@@ -2,8 +2,11 @@ package com.example.songmachine.ui.welcome;
 
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,22 +16,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.songmachine.MainActivity;
 import com.example.songmachine.R;
 import com.example.songmachine.util.MethodUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     public ViewPager viewPager_main;
+    public Button btnGuide;
+    public LinearLayout linearLayout;
     public List<View> list;
     private List<String> permissionsList = new ArrayList<>();
     private ImageView[] dots;
-    public LinearLayout linearLayout;
+    private Intent intent;
     private int[] imgIds = new int[]{R.drawable.welcome1, R.drawable.welcome2, R.drawable.welcome3,
             R.drawable.welcome4};
 
@@ -39,6 +46,11 @@ public class WelcomeActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             checkAppPermission();
         }
+        /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WelcomeActivity.this);
+        String result = prefs.getString("first", null);
+        if (result != null && result.equals("yes")){
+            startMainActivity();
+        }*/
         initUI();
     }
 
@@ -83,7 +95,10 @@ public class WelcomeActivity extends AppCompatActivity {
      * 初始化
      */
     private void initUI() {
+
         viewPager_main = (ViewPager) this.findViewById(R.id.viewPager_main);
+        btnGuide = (Button) this.findViewById(R.id.btn_guide);
+        btnGuide.setOnClickListener(this);
         list = new ArrayList<>();
         for (int imgId : imgIds) {
             ImageView imgView = new ImageView(this);
@@ -99,6 +114,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                if (position == imgIds.length - 1) {
+                    btnGuide.setVisibility(View.VISIBLE);
+                } else {
+                    btnGuide.setVisibility(View.GONE);
+                }
                 for (ImageView dot : dots) {
                     dot.setEnabled(true);
                 }
@@ -128,6 +148,30 @@ public class WelcomeActivity extends AppCompatActivity {
             });
             dots[0].setEnabled(false);
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_guide:
+                startMainActivity();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 开启main界面
+     */
+    private void startMainActivity() {
+       /* SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WelcomeActivity.this).edit();
+        editor.putString("first", "yes");
+        editor.apply();*/
+        intent = new Intent();
+        intent.setClass(WelcomeActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private class MyAdapter extends PagerAdapter {
