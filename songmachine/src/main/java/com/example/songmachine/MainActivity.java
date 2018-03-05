@@ -1,6 +1,7 @@
 package com.example.songmachine;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,18 +23,26 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.example.songmachine.adapter.RecyclerAdapter;
+import com.example.songmachine.adapter.SongNumberAdapter;
 import com.example.songmachine.display.DifferentDisplay;
 import com.example.songmachine.util.EncapsulateClass;
+import com.example.songmachine.util.MethodUtil;
 import com.example.songmachine.util.StorageCManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +55,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnCompletionListener {
 
     private List<String> mPermissions = new ArrayList<>(); // mPermissions只包含必须要的权限,其他权限可去动态申请
     private static final int KEY_REQUEST_PERMISSION_CODE = 1;
@@ -58,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private static final int KEY_START_FLOATWINDOWS = 6;
     private static final int KEY_SHOW_VOLUME_UI = 7; // 调节音量指令
 
-    public VideoView mVideoVie;
+    public SurfaceView surfaceViewMain;
+    public SurfaceHolder holder;
     public RadioButton mRadioButton1;
     public RadioButton mRadioButton2;
     public RadioButton mRadioButton3;
@@ -70,6 +79,12 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     public RadioButton mRadioButton9;
     public RadioButton mRadioButton10;
     public RecyclerView mRecyclerView;
+    private MediaPlayer mMediaPlayer;
+    private TextView selectedNumber;
+    public Dialog dialog;
+    public View inflate;
+    public ListView lvSongNumber;
+    public SongNumberAdapter snAdapter;
 
     private RecyclerAdapter adapter;
     private Bitmap bitmap;
@@ -78,8 +93,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     private DisplayManager mDisplayManager;
     private Display[] mDisplays;
     private DifferentDisplay mDifferentDislay;
+    private boolean isYuanChang = true;
 
     private List<Map<Object, Object>> mapList = new ArrayList<>();
+
+    private List<Map<String, String>> selectedMapList = new ArrayList<>(); // 已点的歌曲数目的集合
 
     private Handler handler = new Handler() {
         @Override
@@ -110,16 +128,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         }
     };
 
-    // 此条线程是发送重唱指令
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            Intent intent = new Intent(CIntent.ACTION_AGAIN_START);
-            sendBroadcast(intent);
-            Log.e("liu", " 发送测试广播");
-        }
-    };
-
     private void startFService() {
         intent = new Intent(MainActivity.this, FloatWindowService.class);
         // startService(intent); 暂时注释便于调试。
@@ -147,42 +155,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         }
     }
 
-    /**
-     * 重新开始唱歌,主屏副屏同步
-     */
-    private void goReplay() {
-        mVideoVie.seekTo(0); // 主屏播放界面重唱
-        if (mDifferentDislay != null) {
-            mDifferentDislay.reset(); // 副屏播放界面重唱
-        }
-    }
-
-    /**
-     * 开始播放视频,主屏副屏同步
-     */
-    private void goPlaying() {
-        if (!mVideoVie.isPlaying() && mVideoVie != null) {
-            mVideoVie.start();
-            mVideoVie.setBackground(null);
-            if (mDifferentDislay != null) {
-                mDifferentDislay.play();
-            }
-        }
-    }
-
-    /**
-     * 暂停视频,主屏副屏同步
-     */
-    private void goPause() {
-        if (mVideoVie != null) {
-            mVideoVie.pause();
-        }
-        if (mDifferentDislay != null) {
-            mDifferentDislay.pause();
-        }
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         mDifferentDislay = new DifferentDisplay(this, mDisplays[mDisplays.length - 1]); // displays[1]是副屏 (现在目前只有一个屏幕,VGA+HDMI作为二个屏幕)
         mDifferentDislay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         // mDifferentDislay.show();  显示副屏，功能已经成功，暂时注释用于调试。
+        mMediaPlayer = new MediaPlayer(); // 初始化
+        mMediaPlayer.setOnCompletionListener(this);
+        selectedNumber = (TextView) this.findViewById(R.id.tv_selected_number);
     }
 
     /**
@@ -219,8 +194,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
             @Override
-            public void onCompleted() {
-
+            public void onCompleted() { // 此方法只在初始化的时候执行一次，把本地所有歌曲，全部添加到已点列表。
+                Log.e("liu", "已点歌曲:" + selectedMapList.size());
+                selectedNumber.setText(selectedMapList.size() + "");
             }
 
             @Override
@@ -231,6 +207,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
             @Override
             public void onNext(File file) {
                 String path = file.getPath();
+                String videoName = file.getName();
+                Map<String, String> map = new HashMap<>();
+                map.put("videoName", videoName);
+                map.put("videoPath", path);
+                selectedMapList.add(map);
             }
         });
     }
@@ -244,31 +225,59 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     @Override
     protected void onPause() {
         super.onPause();
-        if (mVideoVie.canPause()) {
-            mVideoVie.pause();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mVideoVie.stopPlayback();
-        if (mVideoVie != null) {
-            mVideoVie = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
     }
 
     private void initUI() {
-        mVideoVie = (VideoView) this.findViewById(R.id.video_main);
-        // mVideoVie.setMediaController(new MediaController(this));
 
-        Uri uri = Uri.parse("/storage/emulated/0/Movies/爱情留在回忆里.mp4"); // 测试路径
+        Uri uri = Uri.parse("/storage/emulated/0/Movies/60072668.mkv"); // 测试路径
         createVideoThumbnail("/storage/emulated/0/Movies/爱情留在回忆里.mp4");
 
-        mVideoVie.setVideoURI(uri);
-        mVideoVie.setOnPreparedListener(this);
-        mVideoVie.setOnCompletionListener(this);
-        mVideoVie.setOnErrorListener(this);
+        surfaceViewMain = (SurfaceView) this.findViewById(R.id.surface_main);
+        surfaceViewMain.setKeepScreenOn(true);
+        holder = surfaceViewMain.getHolder();
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                mMediaPlayer.setDisplay(surfaceHolder);
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
+            }
+        });
+
+        try {
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(uri.toString());
+            mMediaPlayer.prepare();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mMediaPlayer.start();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         mRadioButton1 = (RadioButton) this.findViewById(R.id.radio_left_1);
         mRadioButton2 = (RadioButton) this.findViewById(R.id.radio_left_2);
@@ -352,43 +361,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
         }
     }
 
-    /**
-     * 视频准备的监听
-     *
-     * @param mediaPlayer
-     */
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        mVideoVie.start();
-        handler.postDelayed(runnable, 5000); // 做下测试的指令
-        //mVideoVie.setBackground(new BitmapDrawable(bitmap)); // 获取要播放的视频的第一帧
-    }
-
-    /**
-     * 视频播放完成的监听事件
-     *
-     * @param mediaPlayer
-     */
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        //mVideoVie.stopPlayback();
-        mVideoVie.start();
-    }
-
-    /**
-     * 视频播放错误的监听事件
-     *
-     * @param mediaPlayer
-     * @param i
-     * @param i1
-     * @return
-     */
-    @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        mVideoVie.stopPlayback();
-        return false;
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -403,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 break;
             case R.id.radio_left_4:
                 message = new Message();
-                message.what = mVideoVie.isPlaying() ? KEY_MAIN_VIDEO_PAUSE : KEY_MAIN_VIDEO_PLAYING;
+                message.what = mMediaPlayer.isPlaying() ? KEY_MAIN_VIDEO_PAUSE : KEY_MAIN_VIDEO_PLAYING;
                 //setCompoundDrawables图片资源替换不成功
                 /*mRadioButton4.setCompoundDrawables(null,
                         mVideoVie.isPlaying() ? getResources().getDrawable(R.drawable.ic_pause_circle_outline) :
@@ -411,9 +383,9 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 /*mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().
                 getDrawable(R.drawable.ic_play_arrow), null, null);*/
                 mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
-                        mVideoVie.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow) :
+                        mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow) :
                                 getResources().getDrawable(R.drawable.ic_pause_circle_outline), null, null);
-                mRadioButton4.setText(mVideoVie.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
+                mRadioButton4.setText(mMediaPlayer.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
                         getResources().getString(R.string.radio_button_left_4_text));
                 handler.sendMessage(message);
                 break;
@@ -422,15 +394,19 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 message.what = KEY_SHOW_VOLUME_UI;
                 handler.sendMessage(message);
                 break;
-            case R.id.radio_right_1:
+            case R.id.radio_right_1: // 切歌功能按键
+                cutSongs();
                 break;
-            case R.id.radio_right_2:
+            case R.id.radio_right_2: // 伴唱功能按键
+                VA();
                 break;
-            case R.id.radio_right_3:
+            case R.id.radio_right_3: // 已点功能按键
+                MethodUtil.toast(MainActivity.this, "dianjidaole");
+                showSongList();
                 break;
-            case R.id.radio_right_4:
+            case R.id.radio_right_4: // 气氛功能按键
                 break;
-            case R.id.radio_right_5:
+            case R.id.radio_right_5: // 返回功能按键
                 break;
         }
     }
@@ -455,6 +431,117 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
     }
 
     /**
+     * 重新开始唱歌,主屏副屏同步
+     */
+    private void goReplay() {
+        mMediaPlayer.seekTo(0); // 主屏播放界面重唱
+        if (mDifferentDislay != null) {
+            mDifferentDislay.reset(); // 副屏播放界面重唱
+        }
+    }
+
+    /**
+     * 开始播放视频,主屏副屏同步
+     */
+    private void goPlaying() {
+        if (!mMediaPlayer.isPlaying() && mMediaPlayer != null) {
+            mMediaPlayer.start();
+            if (mDifferentDislay != null) {
+                mDifferentDislay.play();
+            }
+        }
+    }
+
+    /**
+     * 暂停视频,主屏副屏同步
+     */
+    private void goPause() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+        }
+        if (mDifferentDislay != null) {
+            mDifferentDislay.pause();
+        }
+    }
+
+    /**
+     * 切歌功能
+     */
+    private void cutSongs() {
+        if (selectedMapList.size() > 0) { // 表示有已点的歌曲
+            String path = selectedMapList.get(0).get("videoPath");
+            mMediaPlayer.reset(); // 重置mMediaPlayer
+            try {
+                mMediaPlayer.setDataSource(path);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            PTOS();
+            selectedMapList.remove(0);
+            selectedNumber.setText(selectedMapList.size() + "");
+        } else {
+            MethodUtil.toast(MainActivity.this, getString(R.string.tv_songs_alter_text));
+            mMediaPlayer.setLooping(true); // 已点列表无歌曲，当前歌曲循环播放
+        }
+    }
+
+    /**
+     * VA --> vocal accompaniment 伴唱功能的方法
+     */
+    private void VA() {
+        if (mMediaPlayer != null) {
+            MediaPlayer.TrackInfo[] trackInfo = mMediaPlayer.getTrackInfo();
+            if (trackInfo != null && trackInfo.length > 0) {
+                Log.e("liu", "TrackInfo length: " + trackInfo.length);
+                if (trackInfo.length >= 3) { // 如果大于等于3，则视频文件支持伴唱原唱功能
+                    if (isYuanChang) {
+                        mMediaPlayer.selectTrack(2); // 伴唱
+                        isYuanChang = false;
+                        mRadioButton7.setText("原唱");
+                    } else {
+                        mMediaPlayer.selectTrack(1); // 原唱
+                        isYuanChang = true;
+                        mRadioButton7.setText("伴唱");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * PTOS --> Perform the original song
+     * 强制执行原唱功能
+     */
+    private void PTOS() {
+        MediaPlayer.TrackInfo[] trackInfo = mMediaPlayer.getTrackInfo();
+        if (trackInfo != null && trackInfo.length > 0) {
+            mMediaPlayer.selectTrack(1); // 切换到原唱功能
+            isYuanChang = true;
+            mRadioButton7.setText("伴唱");
+        }
+    }
+
+    private void showSongList() { // 显示已点歌曲的详细情况
+        dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
+        inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.selected_song_number, null);
+        lvSongNumber = inflate.findViewById(R.id.lv_song_number);
+        snAdapter = new SongNumberAdapter(MainActivity.this, selectedMapList);
+        lvSongNumber.setAdapter(snAdapter);
+        dialog.setContentView(inflate);
+        Window window = dialog.getWindow();
+        WindowManager manager = dialog.getWindow().getWindowManager();
+        Display display = manager.getDefaultDisplay();
+        //window.setGravity(Gravity.RIGHT);
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.width = display.getWidth() / 2;   // 弹出框宽度
+        layoutParams.height = display.getHeight() / 2;
+        window.setAttributes(layoutParams);
+        dialog.show();
+    }
+
+    /**
      * 做测试专用的数据
      */
     private void initData() {
@@ -474,7 +561,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnPre
                 }
             }
         }).start();
+    }
 
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) { // 播放完成的监听事件
+        cutSongs();
     }
 
 }
