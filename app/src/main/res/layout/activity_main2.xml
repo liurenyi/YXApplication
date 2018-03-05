@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="zl.com.bluetoothdemo.ui.Main2Activity">
+
+    <com.chaychan.library.BottomBarLayout
+        android:id="@+id/bbl_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.chaychan.library.BottomBarItem
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:iconNormal="@mipmap/ic_launcher"
+            app:iconSelected="@mipmap/ic_launcher"
+            app:itemMarginTop="3dp"
+            app:itemText="首页"
+            app:itemTextSize="8sp"
+            app:textColorNormal="@color/colorAccent"
+            app:textColorSelected="@color/colorPrimary" />
+
+        <com.chaychan.library.BottomBarItem
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:iconNormal="@mipmap/ic_launcher"
+            app:iconSelected="@mipmap/ic_launcher"
+            app:itemMarginTop="-5dp"
+            app:itemText="haha"
+            app:itemTextSize="8sp"
+            app:textColorNormal="@color/colorAccent"
+            app:textColorSelected="@color/colorPrimary" />
+
+        <com.chaychan.library.BottomBarItem
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:iconNormal="@mipmap/ic_launcher"
+            app:iconSelected="@mipmap/ic_launcher"
+            app:itemMarginTop="-5dp"
+            app:itemText="haha"
+            app:itemTextSize="8sp"
+            app:textColorNormal="@color/colorAccent"
+            app:textColorSelected="@color/colorPrimary" />
+
+    </com.chaychan.library.BottomBarLayout>
+
+</RelativeLayout>

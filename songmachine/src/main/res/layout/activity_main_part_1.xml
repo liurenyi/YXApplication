@@ -56,8 +56,16 @@
                 android:text="@string/radio_button_left_5_text" />
         </RadioGroup>
 
-        <com.example.songmachine.video.MyVideoView
+        <!--<com.example.songmachine.video.MyVideoView
             android:id="@+id/video_main"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="3"
+            android:background="@drawable/video_view_background_1"
+            android:paddingBottom="@dimen/layout_margin" />-->
+
+        <SurfaceView
+            android:id="@+id/surface_main"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="3"
@@ -112,15 +120,15 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_song_number"
+        android:id="@+id/tv_selected_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorBlue"
         android:layout_marginBottom="20dp"
+        android:layout_marginLeft="785dp"
+        android:layout_marginRight="130dp"
         android:layout_marginTop="48dp"
         android:background="@drawable/song_number_01"
-        android:layout_marginRight="130dp"
-        android:layout_marginLeft="785dp"
-        android:text="20"/>
+        android:text="20"
+        android:textColor="@color/colorBlue" />
 
 </FrameLayout>

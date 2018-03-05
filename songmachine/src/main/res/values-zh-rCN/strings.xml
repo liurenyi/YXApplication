@@ -15,4 +15,5 @@
     <string name="adapter_click_alert_text">第%1$s个</string>
     <string name="ui_welcome_request_permission_text">必须同意所请求的权限，App才能正常运行</string>
     <string name="btn_guide_text">立即体验</string>
+    <string name="tv_songs_alter_text">没有已点歌曲了</string>
 </resources>
