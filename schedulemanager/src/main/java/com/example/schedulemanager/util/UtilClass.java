@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.DatePicker;
@@ -23,10 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-/**
- * Created by Administrator on 2018/1/22.
- */
 
 public class UtilClass {
 
@@ -200,6 +196,31 @@ public class UtilClass {
         } else {
             return null;
         }
+    }
+
+    private static AudioManager audioManager;
+
+    // 设置音量增加
+    public static void setVolumeUp(Context context, int values) {
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, values, AudioManager.FLAG_PLAY_SOUND);
+    }
+
+    // 设置音量减少
+    public static void setVolumeDown(Context context) {
+
+    }
+
+    // 获取最大的音量值
+    public static int getVolumeMax(Context context) {
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+    }
+
+    // 获取当前音量值
+    public static int getCurrentVolume(Context context) {
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
     }
 
 }

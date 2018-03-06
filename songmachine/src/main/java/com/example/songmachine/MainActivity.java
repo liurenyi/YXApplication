@@ -29,8 +29,10 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public View inflate;
     public ListView lvSongNumber;
     public SongNumberAdapter snAdapter;
+    public ImageView imgVolumeDown, imgVolumeUp;
+    public SeekBar seekBarVolume;
 
     private RecyclerAdapter adapter;
     private Bitmap bitmap;
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     askForPermission();
                     break;
                 case KEY_SHOW_VOLUME_UI:
-                    EncapsulateClass.addVolume(MainActivity.this); // 增加音量的方法，这里调用系统的音量。有需要可自定义音量条
+                    adjustVolumeLayout();
                     break;
 
             }
@@ -407,12 +411,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.radio_right_5: // 返回功能按键
                 break;
+            case R.id.img_volume_down:
+                int currentVolume = EncapsulateClass.getCurrentVolume(MainActivity.this);
+                if (currentVolume > 0) {
+                    EncapsulateClass.adjustVolume(MainActivity.this, currentVolume - 1);
+                    seekBarVolume.setProgress(currentVolume - 1);
+                } else if (currentVolume == 0) {
+                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text));
+                } else {
+                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text_1));
+                }
+                break;
+            case R.id.img_volume_up:
+                int currentVolume1 = EncapsulateClass.getCurrentVolume(MainActivity.this);
+                int volumeMax = EncapsulateClass.getVolumeMax(MainActivity.this);
+                if (currentVolume1 < volumeMax) {
+                    EncapsulateClass.adjustVolume(MainActivity.this, currentVolume1 + 1);
+                    seekBarVolume.setProgress(currentVolume1 + 1);
+                } else {
+                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text_2));
+                }
+                break;
         }
     }
 
     /**
      * 获取视频第一帧
-     *
      */
     private void createVideoThumbnail(String filePath) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -566,4 +590,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cutSongs();
     }
 
+    // 自定义的音量调节布局
+    private void adjustVolumeLayout() {
+        dialog = new Dialog(MainActivity.this, R.style.ActionSheetDialogStyle);
+        View inflate = LayoutInflater.from(this).inflate(R.layout.volume_adjust, null);
+        imgVolumeDown = inflate.findViewById(R.id.img_volume_down);
+        imgVolumeUp = inflate.findViewById(R.id.img_volume_up);
+        imgVolumeDown.setOnClickListener(this);
+        imgVolumeUp.setOnClickListener(this);
+        seekBarVolume = inflate.findViewById(R.id.seek_bar_volume);
+        // seek_bar监听事件
+        seekBarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (i > 0 && i < 75) { // STREAM_MUSIC的最大值为75，此处直接写75，减去频繁调用方法
+                    EncapsulateClass.adjustVolume(MainActivity.this, i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarVolume.setMax(EncapsulateClass.getVolumeMax(MainActivity.this));
+        seekBarVolume.setProgress(EncapsulateClass.getCurrentVolume(MainActivity.this));
+        dialog.setContentView(inflate);
+        dialog.show();
+    }
 }

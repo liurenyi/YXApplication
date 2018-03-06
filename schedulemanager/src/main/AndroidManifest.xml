@@ -29,7 +29,9 @@
             android:name=".ScheduleDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name="com.example.schedulemanager.AlarmReceiver" />
+        <receiver android:name=".AlarmReceiver" />
+
+        <activity android:name=".ui.TestActivity"/>
     </application>
 
 </manifest>

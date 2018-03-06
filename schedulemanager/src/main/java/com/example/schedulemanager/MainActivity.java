@@ -1,6 +1,7 @@
 package com.example.schedulemanager;
 
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public Button btnMaintainSchedule;
     public RadioButton radioAddSchedule;
     public ImageView imgIsGrid;
+    public ImageView imgVolumeDown, imgVolumeUp;
 
 
     public RecyclerView recyclerViewSchedule;
@@ -62,13 +66,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int KEY_GO_TO_DETAIL_INFO = 8;
     public static final int KEY_UPDATE_IMG = 9;
 
+    private Dialog dialog;
+
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case KEY_ADD_SCHEDULE:
-                    gotoAddSchedule();
+                    //gotoAddSchedule();
+                    addTestMethods();
                     break;
                 case KEY_DELETE_SCHEDULE:
                     break;
@@ -92,6 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
+
+
+    private void addTestMethods() {
+        dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
+        View inflate = LayoutInflater.from(this).inflate(R.layout.activity_test, null);
+        imgVolumeDown = inflate.findViewById(R.id.img_volume_down);
+        imgVolumeUp = inflate.findViewById(R.id.img_volume_up);
+        imgVolumeDown.setOnClickListener(this);
+        imgVolumeUp.setOnClickListener(this);
+        dialog.setContentView(inflate);
+        dialog.show();
+    }
 
     /**
      * 新建日程管理
@@ -211,6 +230,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 message = new Message();
                 message.what = KEY_UPDATE_IMG;
                 handler.sendMessage(message);
+                break;
+            case R.id.img_volume_down:
+                int currentVolume = UtilClass.getCurrentVolume(MainActivity.this);
+                if (currentVolume > 0) {
+                    UtilClass.setVolumeUp(MainActivity.this, currentVolume - 1);
+                }
+                break;
+            case R.id.img_volume_up:
+                int currentVolume1 = UtilClass.getCurrentVolume(MainActivity.this);
+                int volumeMax = UtilClass.getVolumeMax(MainActivity.this);
+                if (currentVolume1 < volumeMax) {
+                    UtilClass.setVolumeUp(MainActivity.this, currentVolume1 + 1);
+                }
                 break;
         }
     }
