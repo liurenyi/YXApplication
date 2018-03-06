@@ -18,7 +18,7 @@
             android:layout_height="40dp"
             android:layout_gravity="bottom|center"
             android:background="@drawable/radio_background"
-            android:drawableTop="@drawable/ic_add_alert"
+            android:drawableTop="@drawable/ic_add_alert_black"
             android:text="@string/radio_text_alarm_alert"
             tools:ignore="SmallSp" />
 

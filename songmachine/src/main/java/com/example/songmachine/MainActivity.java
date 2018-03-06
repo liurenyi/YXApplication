@@ -383,8 +383,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 /*mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().
                 getDrawable(R.drawable.ic_play_arrow), null, null);*/
                 mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
-                        mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow) :
-                                getResources().getDrawable(R.drawable.ic_pause_circle_outline), null, null);
+                        mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow_black) :
+                                getResources().getDrawable(R.drawable.ic_pause_circle_filled_black), null, null);
                 mRadioButton4.setText(mMediaPlayer.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
                         getResources().getString(R.string.radio_button_left_4_text));
                 handler.sendMessage(message);
@@ -401,7 +401,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 VA();
                 break;
             case R.id.radio_right_3: // 已点功能按键
-                MethodUtil.toast(MainActivity.this, "dianjidaole");
                 showSongList();
                 break;
             case R.id.radio_right_4: // 气氛功能按键
@@ -414,7 +413,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 获取视频第一帧
      *
-     * @return
      */
     private void createVideoThumbnail(String filePath) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();

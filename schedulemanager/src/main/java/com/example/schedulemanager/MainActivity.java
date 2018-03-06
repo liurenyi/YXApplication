@@ -80,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case KEY_UPDATE_IMG:
                     if (getCurrentSwitch()) {
-                        imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted);
+                        imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted_black);
                         setCurrentSwitch(false);
                         updateUI();
                     } else {
-                        imgIsGrid.setBackgroundResource(R.drawable.ic_view_module);
+                        imgIsGrid.setBackgroundResource(R.drawable.ic_view_module_black);
                         setCurrentSwitch(true);
                         updateUI();
                     }
@@ -173,9 +173,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         imgIsGrid = (ImageView) this.findViewById(R.id.img_grid);
         if (getCurrentSwitch()) {
-            imgIsGrid.setBackgroundResource(R.drawable.ic_view_module);
+            imgIsGrid.setBackgroundResource(R.drawable.ic_view_module_black);
         } else {
-            imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted);
+            imgIsGrid.setBackgroundResource(R.drawable.ic_format_list_bulleted_black);
         }
 
         imgIsGrid.setOnClickListener(this);

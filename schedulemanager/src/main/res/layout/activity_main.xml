@@ -104,7 +104,6 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom|center"
         android:background="@drawable/radio_background"
-        android:drawableTop="@drawable/ic_add"
         android:text="@string/radio_text_add_schedule"
         tools:ignore="SmallSp" />
 
