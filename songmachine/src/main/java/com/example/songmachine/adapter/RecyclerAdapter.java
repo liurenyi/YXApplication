@@ -3,6 +3,8 @@ package com.example.songmachine.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.example.songmachine.R;
 import com.example.songmachine.RecyclerAdapterListener;
 import com.example.songmachine.log.Logw;
+import com.example.songmachine.util.EncapsulateClass;
 
 import java.util.List;
 import java.util.Map;
@@ -24,14 +27,15 @@ import java.util.Map;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private LayoutInflater layoutInflater;
-    private List<Map<Object, Object>> mapList;
+    private List<Map<String, Object>> mapList;
     private RecyclerAdapterListener.OnItemClickListener onItemClickListener;
+    private Bitmap videoThumb;
 
     public void setOnItemClickListener(RecyclerAdapterListener.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public RecyclerAdapter(Context context, List<Map<Object, Object>> mapList) {
+    public RecyclerAdapter(Context context, List<Map<String, Object>> mapList) {
         this.layoutInflater = LayoutInflater.from(context);
         this.mapList = mapList;
     }
@@ -49,8 +53,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Logw.i("liu", "-------");
-        holder.imgVideo.setImageBitmap((Bitmap) mapList.get(position).get("image"));
+        videoThumb = (Bitmap) mapList.get(position).get("image");
+        holder.imgVideo.setImageDrawable(new BitmapDrawable(videoThumb));
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

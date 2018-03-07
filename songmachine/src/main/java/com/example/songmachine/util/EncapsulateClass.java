@@ -1,7 +1,10 @@
 package com.example.songmachine.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.view.WindowManager;
 
 import com.example.songmachine.log.Logw;
@@ -110,4 +113,14 @@ public class EncapsulateClass {
         }
     }
 
+    /**
+     * 获取视频文件缩略图 API>=8(2.2)
+     *
+     * @param path 视频文件的路径
+     * @return Bitmap 返回获取的Bitmap
+     * MINI_KIND、MICRO_KIND、FULL_SCREEN_KIND
+     */
+    public static Bitmap getVideoThumb(String path) {
+        return ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MINI_KIND);
+    }
 }

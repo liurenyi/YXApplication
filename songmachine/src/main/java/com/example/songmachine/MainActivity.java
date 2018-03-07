@@ -1,13 +1,13 @@
 package com.example.songmachine;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.display.DisplayManager;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -91,18 +91,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public SeekBar seekBarVolume;
 
     private RecyclerAdapter adapter;
-    private Bitmap bitmap;
     private Message message;
     private Intent intent;
-    private DisplayManager mDisplayManager;
-    private Display[] mDisplays;
+    public DisplayManager mDisplayManager;
+    public Display[] mDisplays;
     private DifferentDisplay mDifferentDislay;
     private boolean isYuanChang = true;
 
-    private List<Map<Object, Object>> mapList = new ArrayList<>();
+    private List<Map<String, Object>> mapList = new ArrayList<>();
 
     private List<Map<String, String>> selectedMapList = new ArrayList<>(); // 已点的歌曲数目的集合
 
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initRxJava();
-        initData();
         // 当系统为6.0及以上，检查App权限
         if (Build.VERSION.SDK_INT >= 23) {
             checkAppPermission();
@@ -194,7 +193,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).doOnNext(new Action1<File>() {
             @Override
             public void call(File file) {
-
+                String videoPath = file.getPath();
+                Bitmap videoThumb = EncapsulateClass.getVideoThumb(videoPath);
+                Map<String, Object> map1 = new HashMap<>();
+                map1.put("image", videoThumb);
+                mapList.add(map1);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
             @Override
@@ -216,6 +219,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 map.put("videoName", videoName);
                 map.put("videoPath", path);
                 selectedMapList.add(map);
+                if (adapter == null) {
+                    adapter = new RecyclerAdapter(MainActivity.this, mapList);
+                    mRecyclerView.setAdapter(adapter);
+                    adapter.setOnItemClickListener(new RecyclerAdapterListener.OnItemClickListener() {
+                        @Override
+                        public void OnItemClick(View view, int position) {
+                            message = new Message();
+                            message.what = KEY_START_FLOATWINDOWS;
+                            handler.sendMessage(message);
+                        }
+                    });
+                }
+                adapter.notifyDataSetChanged(); // 通知adapter更新数据
             }
         });
     }
@@ -245,10 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUI() {
-
         Uri uri = Uri.parse("/storage/emulated/0/Movies/60072668.mkv"); // 测试路径
-        createVideoThumbnail("/storage/emulated/0/Movies/爱情留在回忆里.mp4");
-
         surfaceViewMain = (SurfaceView) this.findViewById(R.id.surface_main);
         surfaceViewMain.setKeepScreenOn(true);
         holder = surfaceViewMain.getHolder();
@@ -309,25 +322,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //LinearLayoutManager manager = new LinearLayoutManager(this);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);
-        adapter = new RecyclerAdapter(MainActivity.this, mapList);
-        mRecyclerView.setAdapter(adapter);
+        /*adapter = new RecyclerAdapter(MainActivity.this, mapList);
+        mRecyclerView.setAdapter(adapter);*/
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 15, true));
-        adapter.setOnItemClickListener(new RecyclerAdapterListener.OnItemClickListener() {
-            @Override
-            public void OnItemClick(View view, int position) {
-                //Toast.makeText(MainActivity.this, "第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
-                /*Toast.makeText(MainActivity.this, getString(R.string.adapter_click_alert_text, (position + 1) + ""),
-                 Toast.LENGTH_SHORT).show();*/
-                message = new Message();
-                message.what = KEY_START_FLOATWINDOWS;
-                handler.sendMessage(message);
-            }
-        });
     }
 
-    /**
-     * 检查App是否拥有权限
-     */
+    // 检查App是否拥有权限
     private void checkAppPermission() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.
                 WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -340,13 +340,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 请求权限返回结果
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
+    // 请求权限返回结果
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -435,22 +429,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 获取视频第一帧
-     */
-    private void createVideoThumbnail(String filePath) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        File file = new File(filePath);
-        if (file.exists()) {
-            retriever.setDataSource(file.getAbsolutePath());
-            bitmap = retriever.getFrameAtTime();
-            if (bitmap == null) {
-                Toast.makeText(MainActivity.this, "获取视频第一帧失败", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "视频文件不存在", Toast.LENGTH_LONG).show();
-        }
-    }
 
     /**
      * 重新开始唱歌,主屏副屏同步
@@ -561,28 +539,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layoutParams.height = display.getHeight() / 2;
         window.setAttributes(layoutParams);
         dialog.show();
-    }
-
-    /**
-     * 做测试专用的数据
-     */
-    private void initData() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    Map<Object, Object> map = new HashMap<>();
-                    map.put("image", StorageCManager.createVideoThumbnail(StorageCManager.filePath));
-                    mapList.add(map);
-                    if (i % 9 == 0) {
-                        message = new Message();
-                        message.what = KEY_UPDATE_ITEM;
-                        handler.sendMessage(message);
-                    }
-                }
-            }
-        }).start();
     }
 
     @Override
