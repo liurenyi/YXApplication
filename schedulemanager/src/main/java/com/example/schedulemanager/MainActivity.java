@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public RadioButton radioAddSchedule;
     public ImageView imgIsGrid;
     public ImageView imgVolumeDown, imgVolumeUp;
+    public ImageView imgTest;
 
 
     public RecyclerView recyclerViewSchedule;
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-
+    // 用来做测试的方法
     private void addTestMethods() {
         dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
         View inflate = LayoutInflater.from(this).inflate(R.layout.activity_test, null);
@@ -174,6 +178,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUI() {
+
+        imgTest = (ImageView) this.findViewById(R.id.img_test);
+        Bitmap videoThumb = UtilClass.getVideoThumb("/storage/emulated/0/Movies/爱情留在回忆里.mp4", MediaStore.Images.Thumbnails.MINI_KIND);
+        int width = videoThumb.getWidth();
+        int height = videoThumb.getHeight();
+        imgTest.setImageDrawable(new BitmapDrawable(videoThumb));
+        Log.e("liu", "width: " + width + " height: " + height);
         btnAddSchedule = (Button) this.findViewById(R.id.btn_add_schedule);
         btnDeleteSchedule = (Button) this.findViewById(R.id.btn_delete_schedule);
         btnModifySchedule = (Button) this.findViewById(R.id.btn_modify_schedule);

@@ -107,4 +107,10 @@
         android:text="@string/radio_text_add_schedule"
         tools:ignore="SmallSp" />
 
+    <ImageView
+        android:id="@+id/img_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher" />
+
 </FrameLayout>

@@ -3,9 +3,11 @@ package com.example.schedulemanager.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.Window;
@@ -221,6 +223,17 @@ public class UtilClass {
     public static int getCurrentVolume(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+    }
+
+    /**
+     * 获取视频文件缩略图 API>=8(2.2)
+     *
+     * @param path 视频文件的路径
+     * @param kind 缩略图的分辨率：MINI_KIND、MICRO_KIND、FULL_SCREEN_KIND
+     * @return Bitmap 返回获取的Bitmap
+     */
+    public static Bitmap getVideoThumb(String path, int kind) {
+        return ThumbnailUtils.createVideoThumbnail(path, kind);
     }
 
 }
