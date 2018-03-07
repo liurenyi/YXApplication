@@ -123,4 +123,10 @@ public class EncapsulateClass {
     public static Bitmap getVideoThumb(String path) {
         return ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MINI_KIND);
     }
+
+    // 获取当前路径文件的名字
+    public static String getFileName(String path) {
+        File file = new File(path);
+        return file.getName();
+    }
 }

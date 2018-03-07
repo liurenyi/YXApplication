@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public RadioButton mRadioButton10;
     public RecyclerView mRecyclerView;
     private MediaPlayer mMediaPlayer;
-    private TextView selectedNumber;
+    private TextView selectedNumber, selectedInfo;
     public Dialog dialog;
     public View inflate;
     public ListView lvSongNumber;
@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isYuanChang = true;
 
     private List<Map<String, Object>> mapList = new ArrayList<>();
-
     private List<Map<String, String>> selectedMapList = new ArrayList<>(); // 已点的歌曲数目的集合
+    private String curPlaySong = null;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -127,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case KEY_SHOW_VOLUME_UI:
                     adjustVolumeLayout();
                     break;
-
+                case 10:
+                    String format = (String) msg.obj;
+                    selectedInfo.setText(format);
+                    break;
             }
         }
     };
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void askForPermission() {
         if (!Settings.canDrawOverlays(this)) {
-            Toast.makeText(MainActivity.this, "当前无权限，请授权！", Toast.LENGTH_SHORT).show();
+            MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text));
             intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, 1111);
         } else {
@@ -151,9 +154,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1111) {
             if (!Settings.canDrawOverlays(this)) {
-                Toast.makeText(MainActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+                MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text_1));
             } else {
-                Toast.makeText(MainActivity.this, "权限授予成功！", Toast.LENGTH_SHORT).show();
+                MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text_2));
                 startFService();
             }
         }
@@ -178,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMediaPlayer = new MediaPlayer(); // 初始化
         mMediaPlayer.setOnCompletionListener(this);
         selectedNumber = (TextView) this.findViewById(R.id.tv_selected_number);
+
+        selectedInfo = (TextView) this.findViewById(R.id.tv_selected_song_info); // 跑马灯效果的textview
+        selectedInfo.setSelected(true); // 开启跑马灯效
     }
 
     /**
@@ -261,40 +267,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUI() {
-        Uri uri = Uri.parse("/storage/emulated/0/Movies/60072668.mkv"); // 测试路径
-        surfaceViewMain = (SurfaceView) this.findViewById(R.id.surface_main);
-        surfaceViewMain.setKeepScreenOn(true);
-        holder = surfaceViewMain.getHolder();
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                mMediaPlayer.setDisplay(surfaceHolder);
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
-            }
-        });
-
-        try {
-            mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(uri.toString());
-            mMediaPlayer.prepare();
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mMediaPlayer.start();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         mRadioButton1 = (RadioButton) this.findViewById(R.id.radio_left_1);
         mRadioButton2 = (RadioButton) this.findViewById(R.id.radio_left_2);
@@ -325,6 +297,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /*adapter = new RecyclerAdapter(MainActivity.this, mapList);
         mRecyclerView.setAdapter(adapter);*/
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 15, true));
+
+        // surfaceView的初始化
+        surfaceViewMain = (SurfaceView) this.findViewById(R.id.surface_main);
+        surfaceViewMain.setKeepScreenOn(true);
+        holder = surfaceViewMain.getHolder();
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.setDisplay(surfaceHolder);
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
+            }
+        });
+        startPlayVideo("/storage/emulated/0/Movies/60072668.mkv");
+    }
+
+    // 开始播放歌曲
+    private void startPlayVideo(String path) {
+        final Uri uri = Uri.parse("/storage/emulated/0/Movies/60072668.mkv"); // 测试路径
+        try {
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(uri.toString());
+            curPlaySong = uri.toString();
+            mMediaPlayer.prepare();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @SuppressLint("StringFormatMatches")
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mMediaPlayer.start();
+                    getVideoInfo();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 获取当前播放的歌曲，以及下一曲的歌曲,在导航栏进行展示
+    private void getVideoInfo() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String curFileName = EncapsulateClass.getFileName(curPlaySong);
+                String nextFileName = null;
+                String format = null;
+                if (selectedMapList.size() > 0) {
+                    nextFileName = EncapsulateClass.getFileName(selectedMapList.get(0).get("videoName"));
+                    format = getResources().getString(R.string.
+                            ui_main_selected_song_info_text, curFileName, nextFileName);
+                } else {
+                    format = getResources().getString(R.string.
+                            ui_main_selected_song_info_text_1, curFileName);
+                }
+                message = new Message();
+                message.what = 10;
+                message.obj = format;
+                handler.sendMessage(message);
+            }
+        }).start();
     }
 
     // 检查App是否拥有权限
@@ -473,6 +514,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mMediaPlayer.reset(); // 重置mMediaPlayer
             try {
                 mMediaPlayer.setDataSource(path);
+                curPlaySong = path;
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
             } catch (IOException e) {
