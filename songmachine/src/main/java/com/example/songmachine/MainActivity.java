@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private List<Map<String, Object>> mapList = new ArrayList<>();
     private List<Map<String, String>> selectedMapList = new ArrayList<>(); // 已点的歌曲数目的集合
-    private List<String> reverbVals = new ArrayList<>(); // 混响音效的值
     private String curPlaySong = null;
+    private String[] stringArray;
 
     private Context context = MainActivity.this;
 
@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         selectedInfo = (TextView) this.findViewById(R.id.tv_selected_song_info); // 跑马灯效果的textview
         selectedInfo.setSelected(true); // 开启跑马灯效
+        stringArray = getResources().getStringArray(R.array.ReverbName);
     }
 
     /**
@@ -341,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startPlayVideo("/storage/emulated/0/Movies/60072668.mkv");
     }
 
+
     // 开始播放歌曲
     private void startPlayVideo(String path) {
         final Uri uri = Uri.parse("/storage/emulated/0/Movies/60072668.mkv"); // 测试路径
@@ -381,6 +383,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.e("liu", "presetName:" + presetName);
                 reverbNames.add(i);
             }
+            String currentReverb = MethodUtil.getPrefValues(context, "currentReverb", null);
+            if (currentReverb != null) {
+                mPresetReverb.setPreset(Short.parseShort(currentReverb));
+            } else {
+                mPresetReverb.setPreset((short) 0);
+            }
         }
     }
 
@@ -400,8 +408,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 String curFileName = EncapsulateClass.getFileName(curPlaySong);
-                String nextFileName = null;
-                String format = null;
+                String nextFileName;
+                String format;
                 if (selectedMapList.size() > 0) {
                     nextFileName = EncapsulateClass.getFileName(selectedMapList.get(0).get("videoName"));
                     format = getResources().getString(R.string.
@@ -505,29 +513,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.img_volume_down:
                 int currentVolume = EncapsulateClass.getCurrentVolume(MainActivity.this);
                 if (currentVolume > 0) {
-                    EncapsulateClass.adjustVolume(MainActivity.this, currentVolume - 1);
+                    EncapsulateClass.adjustVolume(context, currentVolume - 1);
                     seekBarVolume.setProgress(currentVolume - 1);
                 } else if (currentVolume == 0) {
-                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text));
+                    MethodUtil.toast(context, getString(R.string.ui_main_volume_text));
                 } else {
-                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text_1));
+                    MethodUtil.toast(context, getString(R.string.ui_main_volume_text_1));
                 }
                 break;
             case R.id.img_volume_up:
                 int currentVolume1 = EncapsulateClass.getCurrentVolume(MainActivity.this);
                 int volumeMax = EncapsulateClass.getVolumeMax(MainActivity.this);
                 if (currentVolume1 < volumeMax) {
-                    EncapsulateClass.adjustVolume(MainActivity.this, currentVolume1 + 1);
+                    EncapsulateClass.adjustVolume(context, currentVolume1 + 1);
                     seekBarVolume.setProgress(currentVolume1 + 1);
                 } else {
-                    MethodUtil.toast(this, getString(R.string.ui_main_volume_text_2));
+                    MethodUtil.toast(context, getString(R.string.ui_main_volume_text_2));
                 }
                 break;
             case R.id.btn_function_one:
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(0));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[0]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -536,6 +546,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(1));
                     short preset = mPresetReverb.getPreset();
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
+                    tvPresetReverb.setText(stringArray[1]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -543,7 +555,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(2));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[2]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -551,7 +565,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(3));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[3]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -559,7 +575,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(4));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[4]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -567,7 +585,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(5));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[5]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -575,7 +595,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(6));
                     short preset = mPresetReverb.getPreset();
+                    MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    tvPresetReverb.setText(stringArray[6]);
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
@@ -726,12 +748,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private Button btnOneFunction, btnTwoFunction, btnThreeFunction, btnFourFunction, btnFixFunction,
+    public Button btnOneFunction, btnTwoFunction, btnThreeFunction, btnFourFunction, btnFixFunction,
             btnSixFunction, btnSevenFunction;
-    private SeekBar seekBarBassBoost;
+    public SeekBar seekBarBassBoost;
+    public TextView tvPresetReverb;
 
     // 创建自定义的dialog弹出框
     public void createCustomDialog(Context context, int resId) {
+        String currentReverb = MethodUtil.getPrefValues(context, "currentReverb", null);
         dialog = new Dialog(context, R.style.ActionSheetDialogStyle);
         inflate = LayoutInflater.from(context).inflate(resId, null);
         dialog.setContentView(inflate);
@@ -744,12 +768,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btnSixFunction = inflate.findViewById(R.id.btn_function_six);
             btnSevenFunction = inflate.findViewById(R.id.btn_function_seven);
 
+            tvPresetReverb = inflate.findViewById(R.id.tv_preset_reverb);
+
             btnOneFunction.setOnClickListener(this);
             btnTwoFunction.setOnClickListener(this);
             btnThreeFunction.setOnClickListener(this);
             btnFourFunction.setOnClickListener(this);
             btnFixFunction.setOnClickListener(this);
             btnSixFunction.setOnClickListener(this);
+
             btnSevenFunction.setOnClickListener(this);
 
             seekBarBassBoost = inflate.findViewById(R.id.seek_bar_bass_boost);
@@ -773,6 +800,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
         dialog.show();
+        updateReverbState(currentReverb);
+    }
 
+
+    private void updateReverbState(String currentReverb) {
+        Log.e("liu", "currentReverb: " + currentReverb);
+        if (currentReverb == null || currentReverb.equals("0")) {
+            tvPresetReverb.setText(stringArray[0]);
+        } else if (currentReverb.equals("1")) {
+            tvPresetReverb.setText(stringArray[1]);
+        } else if (currentReverb.equals("2")) {
+            tvPresetReverb.setText(stringArray[2]);
+        } else if (currentReverb.equals("3")) {
+            tvPresetReverb.setText(stringArray[3]);
+        } else if (currentReverb.equals("4")) {
+            tvPresetReverb.setText(stringArray[4]);
+        } else if (currentReverb.equals("5")) {
+            tvPresetReverb.setText(stringArray[5]);
+        } else if (currentReverb.equals("6")) {
+            tvPresetReverb.setText(stringArray[6]);
+        }
     }
 }
