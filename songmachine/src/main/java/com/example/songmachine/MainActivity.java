@@ -9,6 +9,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.display.DisplayManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.BassBoost;
+import android.media.audiofx.Equalizer;
+import android.media.audiofx.PresetReverb;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +32,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public RadioButton mRadioButton8;
     public RadioButton mRadioButton9;
     public RadioButton mRadioButton10;
+    public RadioButton mRadioButtonSetting, mRadioButtonTuning;
     public RecyclerView mRecyclerView;
     private MediaPlayer mMediaPlayer;
     private TextView selectedNumber, selectedInfo;
@@ -100,7 +105,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private List<Map<String, Object>> mapList = new ArrayList<>();
     private List<Map<String, String>> selectedMapList = new ArrayList<>(); // 已点的歌曲数目的集合
+    private List<String> reverbVals = new ArrayList<>(); // 混响音效的值
     private String curPlaySong = null;
+
+    private Context context = MainActivity.this;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -203,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bitmap videoThumb = EncapsulateClass.getVideoThumb(videoPath);
                 Map<String, Object> map1 = new HashMap<>();
                 map1.put("image", videoThumb);
+                map1.put("songName", file.getName());
                 mapList.add(map1);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
@@ -210,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onCompleted() { // 此方法只在初始化的时候执行一次，把本地所有歌曲，全部添加到已点列表。
                 Log.e("liu", "已点歌曲:" + selectedMapList.size());
                 selectedNumber.setText(selectedMapList.size() + "");
+                getVideoInfo(); // 当已点歌曲设置完成时，selectedMapList不为null，在去执行一次此方法。
             }
 
             @Override
@@ -264,6 +274,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+        // 释放所有资源
+        mBassBoost.release();
+        mPresetReverb.release();
+        mEqualizer.release();
     }
 
     private void initUI() {
@@ -278,6 +292,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRadioButton8 = (RadioButton) this.findViewById(R.id.radio_right_3);
         mRadioButton9 = (RadioButton) this.findViewById(R.id.radio_right_4);
         mRadioButton10 = (RadioButton) this.findViewById(R.id.radio_right_5);
+        mRadioButtonSetting = (RadioButton) this.findViewById(R.id.radio_btn_settings);
+        mRadioButtonTuning = (RadioButton) this.findViewById(R.id.radio_btn_tuning);
 
         mRadioButton1.setOnClickListener(this);
         mRadioButton2.setOnClickListener(this);
@@ -289,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRadioButton8.setOnClickListener(this);
         mRadioButton9.setOnClickListener(this);
         mRadioButton10.setOnClickListener(this);
+        mRadioButtonSetting.setOnClickListener(this);
+        mRadioButtonTuning.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
         //LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -336,11 +354,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mMediaPlayer.start();
+                    setupPresetReverb(mMediaPlayer);
+                    setupBassBoost(mMediaPlayer);
                     getVideoInfo();
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private Equalizer mEqualizer; // 定义系统的均衡器
+    private PresetReverb mPresetReverb; // 定义系统的预设音场控制器
+    private List<Short> reverbNames = new ArrayList<>();
+
+    // 初始化音场
+    private void setupPresetReverb(MediaPlayer mediaPlayer) {
+        if (mediaPlayer != null) {
+            mEqualizer = new Equalizer(0, mediaPlayer.getAudioSessionId());
+            mEqualizer.setEnabled(true); // 开启均衡器
+            mPresetReverb = new PresetReverb(0, mediaPlayer.getAudioSessionId());
+            mPresetReverb.setEnabled(true); //开启预设音场控制器
+            for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
+                // <-- Normal,Classical,Dance,Flat,Folk,Heavy Metal,Hip Hop,Jazz,Pop,Rock -->
+                String presetName = mEqualizer.getPresetName(i);
+                Log.e("liu", "presetName:" + presetName);
+                reverbNames.add(i);
+            }
+        }
+    }
+
+    private BassBoost mBassBoost;
+
+    // 初始化重低音控制器
+    private void setupBassBoost(MediaPlayer mediaPlayer) {
+        if (mediaPlayer != null) {
+            mBassBoost = new BassBoost(0, mediaPlayer.getAudioSessionId());
+            mBassBoost.setEnabled(true);
         }
     }
 
@@ -446,6 +496,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.radio_right_5: // 返回功能按键
                 break;
+            case R.id.radio_btn_settings:
+                MethodUtil.toast(context, getString(R.string.ui_main_volume_text));
+                break;
+            case R.id.radio_btn_tuning:
+                createCustomDialog(context, R.layout.layout_tuning); // 启动一个自定义的dialog
+                break;
             case R.id.img_volume_down:
                 int currentVolume = EncapsulateClass.getCurrentVolume(MainActivity.this);
                 if (currentVolume > 0) {
@@ -467,13 +523,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.toast(this, getString(R.string.ui_main_volume_text_2));
                 }
                 break;
+            case R.id.btn_function_one:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(0));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_two:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(1));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_three:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(2));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_four:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(3));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_five:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(4));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_six:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(5));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
+            case R.id.btn_function_seven:
+                if (reverbNames.size() > 0) {
+                    mPresetReverb.setPreset(reverbNames.get(6));
+                    short preset = mPresetReverb.getPreset();
+                    PresetReverb.Settings properties = mPresetReverb.getProperties();
+                    Log.e("liu", "preset: " + preset + " properties: " + properties);
+                }
+                break;
         }
     }
 
-
-    /**
-     * 重新开始唱歌,主屏副屏同步
-     */
+    // 重新开始唱歌,主屏副屏同步
     private void goReplay() {
         mMediaPlayer.seekTo(0); // 主屏播放界面重唱
         if (mDifferentDislay != null) {
@@ -481,9 +590,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 开始播放视频,主屏副屏同步
-     */
+    // 开始播放视频,主屏副屏同步
     private void goPlaying() {
         if (!mMediaPlayer.isPlaying() && mMediaPlayer != null) {
             mMediaPlayer.start();
@@ -493,9 +600,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 暂停视频,主屏副屏同步
-     */
+    // 暂停视频,主屏副屏同步
     private void goPause() {
         if (mMediaPlayer != null) {
             mMediaPlayer.pause();
@@ -505,9 +610,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 切歌功能
-     */
+    // 切歌功能
     private void cutSongs() {
         if (selectedMapList.size() > 0) { // 表示有已点的歌曲
             String path = selectedMapList.get(0).get("videoPath");
@@ -620,5 +723,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekBarVolume.setProgress(EncapsulateClass.getCurrentVolume(MainActivity.this));
         dialog.setContentView(inflate);
         dialog.show();
+    }
+
+
+    private Button btnOneFunction, btnTwoFunction, btnThreeFunction, btnFourFunction, btnFixFunction,
+            btnSixFunction, btnSevenFunction;
+    private SeekBar seekBarBassBoost;
+
+    // 创建自定义的dialog弹出框
+    public void createCustomDialog(Context context, int resId) {
+        dialog = new Dialog(context, R.style.ActionSheetDialogStyle);
+        inflate = LayoutInflater.from(context).inflate(resId, null);
+        dialog.setContentView(inflate);
+        if (resId == R.layout.layout_tuning) {
+            btnOneFunction = inflate.findViewById(R.id.btn_function_one);
+            btnTwoFunction = inflate.findViewById(R.id.btn_function_two);
+            btnThreeFunction = inflate.findViewById(R.id.btn_function_three);
+            btnFourFunction = inflate.findViewById(R.id.btn_function_four);
+            btnFixFunction = inflate.findViewById(R.id.btn_function_five);
+            btnSixFunction = inflate.findViewById(R.id.btn_function_six);
+            btnSevenFunction = inflate.findViewById(R.id.btn_function_seven);
+
+            btnOneFunction.setOnClickListener(this);
+            btnTwoFunction.setOnClickListener(this);
+            btnThreeFunction.setOnClickListener(this);
+            btnFourFunction.setOnClickListener(this);
+            btnFixFunction.setOnClickListener(this);
+            btnSixFunction.setOnClickListener(this);
+            btnSevenFunction.setOnClickListener(this);
+
+            seekBarBassBoost = inflate.findViewById(R.id.seek_bar_bass_boost);
+            seekBarBassBoost.setMax(1000);
+            seekBarBassBoost.setProgress(0);
+            seekBarBassBoost.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    mBassBoost.setStrength((short) i);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+        }
+        dialog.show();
+
     }
 }

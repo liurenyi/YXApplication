@@ -27,6 +27,34 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="10dp">
 
+        <RadioButton
+            android:id="@+id/radio_btn_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="230dp"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_settings"
+            android:gravity="center"
+            android:text="@string/radio_button_top_menu_1"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/radio_btn_tuning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="300dp"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_invert_colors"
+            android:gravity="center"
+            android:text="@string/radio_button_top_menu"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tv_selected_song_info"
             android:layout_width="200dp"

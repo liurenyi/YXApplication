@@ -1,12 +1,17 @@
 package com.example.songmachine.util;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
+import com.example.songmachine.R;
 import com.example.songmachine.log.Logw;
 
 import java.io.File;

@@ -6,13 +6,13 @@
     android:layout_height="110dp">
 
     <LinearLayout
-        android:background="@drawable/adapter_item_background"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/adapter_item_background"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -20,26 +20,27 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:gravity="right|center_vertical"
+                android:layout_marginLeft="115dp"
+                android:layout_marginTop="11dp"
+                android:gravity="center"
                 android:text="Andy"
                 tools:ignore="HardcodedText,NestedWeights,RtlHardcoded" />
 
             <TextView
                 android:id="@+id/textView2"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_alignParentRight="true"
                 android:layout_gravity="center"
-                android:paddingRight="@dimen/adapter_item_text_margin"
-                android:gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="11dp"
                 android:text="国语"
                 tools:ignore="HardcodedText,NestedWeights,RtlHardcoded,RtlSymmetry" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -48,11 +49,12 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingRight="@dimen/adapter_item_text_margin"
-                android:gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
                 android:text="阿杜"
+                android:layout_centerVertical="true"
                 tools:ignore="HardcodedText,NestedWeights,RtlHardcoded,RtlSymmetry" />
 
         </RelativeLayout>

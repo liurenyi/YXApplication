@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         videoThumb = (Bitmap) mapList.get(position).get("image");
+        String str = mapList.get(position).get("songName").toString().trim();
+        String result = str.substring(0, str.indexOf("."));
         holder.imgVideo.setImageDrawable(new BitmapDrawable(videoThumb));
+        holder.textView1.setText(result);
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

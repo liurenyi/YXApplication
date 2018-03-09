@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- 使用音场效果必要的权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +20,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".FloatWindowService" />
 
@@ -26,7 +30,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.welcome.WelcomeActivity"></activity>
+        <activity android:name=".ui.welcome.WelcomeActivity" />
         <activity android:name=".ui.welcome.GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

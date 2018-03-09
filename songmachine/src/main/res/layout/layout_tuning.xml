@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_tuning_bakcgorund"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="450dp"
+        android:layout_height="150dp">
+
+        <TextView
+            android:id="@+id/tv_tuning_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/tv_menu_title_text"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:columnCount="3"
+            android:padding="10dp"
+            android:rowCount="3"
+            app:layout_constraintLeft_toRightOf="@id/tv_tuning_title">
+
+            <Button
+                android:id="@+id/btn_function_one"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_1" />
+
+            <Button
+                android:id="@+id/btn_function_two"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_2" />
+
+            <Button
+                android:id="@+id/btn_function_three"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_3" />
+
+            <Button
+                android:id="@+id/btn_function_four"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_4" />
+
+            <Button
+                android:id="@+id/btn_function_five"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_5" />
+
+            <Button
+                android:id="@+id/btn_function_six"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_6" />
+
+            <Button
+                android:id="@+id/btn_function_seven"
+                style="@style/ButtonTuningFunction"
+                android:text="@string/tv_tuning_type_7" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="450dp"
+        android:layout_height="60dp">
+
+        <TextView
+            android:id="@+id/tv_bass_boost"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:gravity="center"
+            android:text="@string/tv_menu_title_text_1"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seek_bar_bass_boost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_bass_boost" />
+    </RelativeLayout>
+
+</LinearLayout>
