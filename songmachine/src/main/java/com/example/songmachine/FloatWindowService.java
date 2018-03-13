@@ -1,5 +1,6 @@
 package com.example.songmachine;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.songmachine.log.Logw;
 import com.example.songmachine.util.EncapsulateClass;
@@ -33,10 +33,6 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener {
 
     public static final String TAG = "liu-FloatWindowService";
-    public ImageView imgFastForward; //快进
-    public ImageView imgFastRewind; // 后退
-    public ImageView imgPlayAndPause; // 暂停
-    public ImageView imgKeyboardReturn; // 退出
     public ImageView imgBack;
     public SeekBar seekBarVideoProgress; // 视频进度条
     public TextView textVideoTime;  // 视频当前时间进度
@@ -53,12 +49,15 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     public int FloatWindowWidth;
     public int FloatWindowHeight;
 
+    public String videoPath;
+
     public static final int SIGNAL_FAST_FORWARD = 1;
     public static final int SIGNAL_FAST_REWIND = 2;
     public static final int SIGNAL_PLAY_AND_PAUSE = 3;
     public static final int SIGNAL_KEYBOARD_RETURN = 4;
     public static final int SIGNAL_UPDATE_PLAYING_VIDEO_TIME = 5;
 
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -80,16 +79,11 @@ public class FloatWindowService extends Service implements View.OnClickListener,
                     }
                     break;
                 case SIGNAL_KEYBOARD_RETURN:
-                    if (mediaPlayer != null) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        mediaPlayer = null;
-                    }
-                    windowManager.removeView(view);
-                    stopSelf();
                     break;
                 case SIGNAL_UPDATE_PLAYING_VIDEO_TIME:
-                    textVideoTime.setText(EncapsulateClass.formatTime(mediaPlayer.getCurrentPosition())); //设置当前位置的时间的进度
+                    if (mediaPlayer != null) {
+                        textVideoTime.setText(EncapsulateClass.formatTime(mediaPlayer.getCurrentPosition())); //设置当前位置的时间的进度
+                    }
                     break;
                 default:
                     break;
@@ -121,21 +115,24 @@ public class FloatWindowService extends Service implements View.OnClickListener,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logw.e(TAG, "-->onStartCommand()");
+        videoPath = intent.getStringExtra("video_path");
+        Logw.e(TAG, "-->onStartCommand()" + " 选中的path:" + videoPath);
+        try {
+            mediaPlayer.setDataSource(videoPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        timerTask.cancel(); // 退出悬浮窗口时候，取消计时器任务。
-//        windowManager.removeView(view);
-        Message message = new Message();
-        message.what = SIGNAL_KEYBOARD_RETURN;
-        handler.sendMessage(message);
+        windowManager.removeView(view);
         Logw.e(TAG, "-->onDestroy()");
     }
 
+    // 创建悬浮窗口
     private void createFloatWindow() {
         View view = initFloatUI();
         windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -198,22 +195,11 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.fast_forward:
-                Toast.makeText(getApplicationContext(), "快进", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.fast_rewind:
-                Toast.makeText(getApplicationContext(), "快退", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.play_and_pause:
-                Message message2 = new Message();
-                message2.what = SIGNAL_PLAY_AND_PAUSE;
-                handler.sendMessage(message2);
-                break;
-            case R.id.keyboard_return:
-                stopSelf(); // 停止服务，使其走OnDestroy方法，然后移除悬浮窗。
-                break;
             case R.id.img_back:
-                stopSelf();
+                timerTask.cancel(); // 退出悬浮窗口时候，取消计时器任务。
+                //windowManager.removeView(view);
+                releasePlayer();
+                stopSelf(); //停止服务，使其走OnDestroy方法，然后移除悬浮窗。
                 break;
             default:
                 break;
@@ -226,19 +212,11 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     private View initFloatUI() {
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         view = inflater.inflate(R.layout.video_display, null, false);
-        imgFastForward = view.findViewById(R.id.fast_forward);
-        imgFastRewind = view.findViewById(R.id.fast_rewind);
-        imgPlayAndPause = view.findViewById(R.id.play_and_pause);
-        imgKeyboardReturn = view.findViewById(R.id.keyboard_return);
         imgBack = view.findViewById(R.id.img_back);
         seekBarVideoProgress = view.findViewById(R.id.video_progress);
         textVideoTime = view.findViewById(R.id.video_time);
         textToggleVideoTime = view.findViewById(R.id.video_toggle_time);
         videoControl = view.findViewById(R.id.video_control);
-        imgFastForward.setOnClickListener(this);
-        imgFastRewind.setOnClickListener(this);
-        imgPlayAndPause.setOnClickListener(this);
-        imgKeyboardReturn.setOnClickListener(this);
         imgBack.setOnClickListener(this);
         seekBarVideoProgress.setOnSeekBarChangeListener(this);
 
@@ -254,21 +232,15 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnSeekCompleteListener(this);
         mediaPlayer.setOnVideoSizeChangedListener(this);
-
-        String filePath = "/mnt/sdcard/1234.mkv";
-        try {
-            mediaPlayer.setDataSource(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return view;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Logw.i(TAG, "-->surfaceCreated()");
+        Logw.e(TAG, "-->surfaceCreated()");
         mediaPlayer.setDisplay(surfaceHolder);
         try {
+            mediaPlayer.setVolume(0f, 0f); // 静音播放，此处乃是预览视频播放，可设置静音播放模式
             mediaPlayer.prepare();
             seekBarVideoProgress.setMax(mediaPlayer.getDuration());
             textToggleVideoTime.setText(EncapsulateClass.formatTime(mediaPlayer.getDuration())); //获取视频总共时间
@@ -288,7 +260,7 @@ public class FloatWindowService extends Service implements View.OnClickListener,
             timer.schedule(timerTask, 0, 1000);
             mediaPlayer.start();
             isPlaying = true;
-            updateImgForPlaying(isPlaying);
+            //updateImgForPlaying(isPlaying);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -296,18 +268,13 @@ public class FloatWindowService extends Service implements View.OnClickListener,
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        Logw.i(TAG, "-->surfaceChanged()");
+
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        Logw.i(TAG, "-->surfaceDestroyed()");
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        //windowManager.removeView(view);
+        Logw.e(TAG, "-->surfaceDestroyed()");
+        windowManager.removeView(view);
     }
 
     @Override
@@ -357,5 +324,14 @@ public class FloatWindowService extends Service implements View.OnClickListener,
     private void updateImgForPlaying(Boolean b) {
         //int resid = b ? R.drawable.ic_pause_circle_outline_24dp : R.drawable.ic_play_arrow_24dp;
         //imgPlayAndPause.setBackgroundResource(resid);
+    }
+
+    // 释放mediaPlayer对象
+    private void releasePlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }

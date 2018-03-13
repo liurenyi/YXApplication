@@ -26,7 +26,7 @@
     <string name="ui_main_permission_text">当前无权限，请授权!</string>
     <string name="ui_main_permission_text_1">权限授予失败，无法开启悬浮窗</string>
     <string name="ui_main_permission_text_2">权限授予成功</string>
-    <string name="ui_main_selected_song_info_text">当前歌曲:%1$s  下一首:%2$s</string>
+    <string name="ui_main_selected_song_info_text">当前歌曲:%1$s   下一首:%2$s</string>
     <string name="ui_main_selected_song_info_text_1">当前歌曲:%1$s</string>
     <string name="tv_tuning_type_1">标准</string>
     <string name="tv_tuning_type_2">经典</string>

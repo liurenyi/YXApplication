@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.display.DisplayManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int KEY_MAIN_VIDEO_PAUSE = 3;
     private static final int KEY_MAIN_VIDEO_REPLAY = 4; // 重唱指令
     private static final int KEY_UPDATE_ITEM = 5;
-    private static final int KEY_START_FLOATWINDOWS = 6;
+    private static final int KEY_START_FLOATWINDOWS = 6; // 点击选中的歌曲开启预览界面
     private static final int KEY_SHOW_VOLUME_UI = 7; // 调节音量指令
 
     public SurfaceView surfaceViewMain;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String[] stringArray;
 
     private Context context = MainActivity.this;
+    private String chooseUri;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     adapter.notifyDataSetChanged();
                     break;
                 case KEY_START_FLOATWINDOWS:
+                    chooseUri = (String) msg.obj;
                     // 开启悬浮窗之前先请求权限
                     askForPermission();
                     break;
@@ -143,29 +146,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void startFService() {
-        intent = new Intent(MainActivity.this, FloatWindowService.class);
-        // startService(intent); 暂时注释便于调试。
+    // 开启悬浮窗表示预览界面
+    private void startFService(String uri) {
+        intent = new Intent(context, FloatWindowService.class);
+        intent.putExtra("video_path", uri);
+        startService(intent); // 暂时注释便于调试。
     }
 
+    // 检查是否有开启悬浮窗的权限
     private void askForPermission() {
-        if (!Settings.canDrawOverlays(this)) {
-            MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text));
+        if (!Settings.canDrawOverlays(context)) {
+            MethodUtil.toast(context, getString(R.string.ui_main_permission_text));
             intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, 1111);
         } else {
-            startFService(); // 开启悬浮窗的服务
+            startFService(chooseUri); // 开启悬浮窗的服务
         }
     }
 
+    // 授权悬浮窗权限返回的结果处理
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1111) {
-            if (!Settings.canDrawOverlays(this)) {
-                MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text_1));
+            if (!Settings.canDrawOverlays(context)) {
+                MethodUtil.toast(context, getString(R.string.ui_main_permission_text_1));
             } else {
-                MethodUtil.toast(MainActivity.this, getString(R.string.ui_main_permission_text_2));
-                startFService();
+                MethodUtil.toast(context, getString(R.string.ui_main_permission_text_2));
+                startFService(chooseUri);
             }
         }
     }
@@ -173,12 +180,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC); // 设置音频流
         setContentView(R.layout.activity_main);
         initRxJava();
         // 当系统为6.0及以上，检查App权限
         if (Build.VERSION.SDK_INT >= 23) {
             checkAppPermission();
-            askForPermission();
         }
         // 实现副屏的功能代码逻辑
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
@@ -213,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, Object> map1 = new HashMap<>();
                 map1.put("image", videoThumb);
                 map1.put("songName", file.getName());
+                map1.put("video_path", videoPath);
                 mapList.add(map1);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
@@ -242,8 +250,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     adapter.setOnItemClickListener(new RecyclerAdapterListener.OnItemClickListener() {
                         @Override
                         public void OnItemClick(View view, int position) {
+                            String videoPath = (String) mapList.get(position).get("video_path");
                             message = new Message();
                             message.what = KEY_START_FLOATWINDOWS;
+                            message.obj = videoPath;
                             handler.sendMessage(message);
                         }
                     });
@@ -458,6 +468,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private static int tempVolume = 0; // 音量为0
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -469,16 +481,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 handler.sendMessage(message);
                 break;
             case R.id.radio_left_3:
+                int volume = EncapsulateClass.getCurrentVolume(context);
+                if (volume > 0) {
+                    tempVolume = volume;
+                    EncapsulateClass.adjustVolume(context, 0);
+                } else if (volume == 0) {
+                    EncapsulateClass.adjustVolume(context, tempVolume);
+                }
                 break;
             case R.id.radio_left_4:
                 message = new Message();
                 message.what = mMediaPlayer.isPlaying() ? KEY_MAIN_VIDEO_PAUSE : KEY_MAIN_VIDEO_PLAYING;
-                //setCompoundDrawables图片资源替换不成功
-                /*mRadioButton4.setCompoundDrawables(null,
-                        mVideoVie.isPlaying() ? getResources().getDrawable(R.drawable.ic_pause_circle_outline) :
-                                getResources().getDrawable(R.drawable.ic_play_arrow), null, null);*/
-                /*mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().
-                getDrawable(R.drawable.ic_play_arrow), null, null);*/
                 mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
                         mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow_black) :
                                 getResources().getDrawable(R.drawable.ic_pause_circle_filled_black), null, null);
@@ -727,7 +740,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if (i > 0 && i < 75) { // STREAM_MUSIC的最大值为75，此处直接写75，减去频繁调用方法
-                    EncapsulateClass.adjustVolume(MainActivity.this, i);
+                    EncapsulateClass.adjustVolume(context, i);
                 }
             }
 

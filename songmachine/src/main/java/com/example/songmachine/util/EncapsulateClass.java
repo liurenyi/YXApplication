@@ -1,28 +1,18 @@
 package com.example.songmachine.util;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
-import com.example.songmachine.R;
 import com.example.songmachine.log.Logw;
 
 import java.io.File;
 
 import rx.Observable;
 import rx.functions.Func1;
-
-/**
- * 封装类
- * Created by Administrator on 2018/1/15.
- */
 
 public class EncapsulateClass {
 
@@ -52,7 +42,7 @@ public class EncapsulateClass {
         } else if (time < A_HOUR && time >= A_MINUTE) {
             minute = (int) (time / A_MINUTE);
             second = (int) ((time - minute * A_MINUTE) / A_SECOND);
-            return minute + ":" + second;
+            return (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
         } else if (time >= 0 && time < 10 * 1000) {
             second = (int) (time / A_SECOND);
             return "00:0" + second;
@@ -132,6 +122,11 @@ public class EncapsulateClass {
     // 获取当前路径文件的名字
     public static String getFileName(String path) {
         File file = new File(path);
-        return file.getName();
+        return formatSongName(file.getName());
+    }
+
+    // 格式化歌曲的名字，去掉后面的后缀
+    private static String formatSongName(String name) {
+        return name.substring(0, name.indexOf("."));
     }
 }
