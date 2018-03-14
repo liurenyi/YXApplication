@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/app1/app1.iml" filepath="$PROJECT_DIR$/app1/app1.iml" />
       <module fileurl="file://$PROJECT_DIR$/bluetoothtest/bluetoothtest.iml" filepath="$PROJECT_DIR$/bluetoothtest/bluetoothtest.iml" />
       <module fileurl="file://$PROJECT_DIR$/floatwindow/floatwindow.iml" filepath="$PROJECT_DIR$/floatwindow/floatwindow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fullscreenvideo/fullscreenvideo.iml" filepath="$PROJECT_DIR$/fullscreenvideo/fullscreenvideo.iml" />
       <module fileurl="file://$PROJECT_DIR$/memorandummanager/memorandummanager.iml" filepath="$PROJECT_DIR$/memorandummanager/memorandummanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/myapplication/myapplication.iml" filepath="$PROJECT_DIR$/myapplication/myapplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/schedulemanager/schedulemanager.iml" filepath="$PROJECT_DIR$/schedulemanager/schedulemanager.iml" />

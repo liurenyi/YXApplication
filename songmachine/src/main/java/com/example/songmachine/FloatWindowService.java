@@ -118,7 +118,9 @@ public class FloatWindowService extends Service implements View.OnClickListener,
         videoPath = intent.getStringExtra("video_path");
         Logw.e(TAG, "-->onStartCommand()" + " 选中的path:" + videoPath);
         try {
-            mediaPlayer.setDataSource(videoPath);
+            if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.setDataSource(videoPath);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

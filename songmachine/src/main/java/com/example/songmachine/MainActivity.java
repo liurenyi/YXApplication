@@ -25,18 +25,28 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public SurfaceView surfaceViewMain;
     public SurfaceHolder holder;
+    public LinearLayout relativeSurface;
+    public RadioGroup radioGroupLeft, radioGroupRight;
     public RadioButton mRadioButton1;
     public RadioButton mRadioButton2;
     public RadioButton mRadioButton3;
@@ -111,6 +123,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Context context = MainActivity.this;
     private String chooseUri;
+
+    private static final String KEY_PLAY_MODE = "play_mode"; //播放的模式，小窗口or全屏
+    private static final String KEY_PLAY_MODE_SMALL_VALUES = "small"; //小窗口模式设置值
+    private static final String KEY_PLAY_MODE_FULL_VALUES = "full"; //全屏设置值
+    private static int relativeSurfaceWidth;
+    private static int relativeSurfaceHeight;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -182,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setVolumeControlStream(AudioManager.STREAM_MUSIC); // 设置音频流
         setContentView(R.layout.activity_main);
+        MethodUtil.setPrefValues(context, KEY_PLAY_MODE, KEY_PLAY_MODE_SMALL_VALUES);
         initRxJava();
         // 当系统为6.0及以上，检查App权限
         if (Build.VERSION.SDK_INT >= 23) {
@@ -196,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMediaPlayer = new MediaPlayer(); // 初始化
         mMediaPlayer.setOnCompletionListener(this);
         selectedNumber = (TextView) this.findViewById(R.id.tv_selected_number);
-
         selectedInfo = (TextView) this.findViewById(R.id.tv_selected_song_info); // 跑马灯效果的textview
         selectedInfo.setSelected(true); // 开启跑马灯效
         stringArray = getResources().getStringArray(R.array.ReverbName);
@@ -292,6 +310,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUI() {
+
+        relativeSurface = this.findViewById(R.id.relative_surface);
+        relativeSurface.setOnClickListener(this);
+
+        radioGroupLeft = this.findViewById(R.id.radio_group_left);
+        radioGroupRight = this.findViewById(R.id.radio_group_right);
 
         mRadioButton1 = (RadioButton) this.findViewById(R.id.radio_left_1);
         mRadioButton2 = (RadioButton) this.findViewById(R.id.radio_left_2);
@@ -614,6 +638,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
+            case R.id.relative_surface: // 点击surfaceview出发全屏功能
+                resetSize();
+                break;
         }
     }
 
@@ -659,6 +686,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 e.printStackTrace();
             }
             PTOS();
+            // 解决上一首歌曲处于暂停状态，点击切歌，图标不改变。
+            mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null, getResources().
+                    getDrawable(R.drawable.ic_pause_circle_filled_black), null, null);
+            mRadioButton4.setText(getResources().getString(R.string.radio_button_left_4_text));
             selectedMapList.remove(0);
             selectedNumber.setText(selectedMapList.size() + "");
         } else {
@@ -834,5 +865,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (currentReverb.equals("6")) {
             tvPresetReverb.setText(stringArray[6]);
         }
+    }
+
+    // 更新radiobutton显示的状态
+    /*private void updateRadioButtonState() {
+        mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
+                mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_play_arrow_black) :
+                        getResources().getDrawable(R.drawable.ic_pause_circle_filled_black), null, null);
+        mRadioButton4.setText(mMediaPlayer.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
+                getResources().getString(R.string.radio_button_left_4_text));
+    }*/
+
+    // 重新绘制SurfaceView的布局，达到全屏效果。
+    private void resetSize() {
+        String values = MethodUtil.getPrefValues(context, KEY_PLAY_MODE, null);
+        if (values != null && values.equals(KEY_PLAY_MODE_SMALL_VALUES)) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.
+                    MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            relativeSurface.setLayoutParams(params);
+            // 开启动画
+            relativeSurface.setAnimation(AnimationUtils.loadAnimation(context, R.anim.layout_enlarge));
+            radioGroupRight.setVisibility(View.GONE);
+            radioGroupLeft.setVisibility(View.GONE);
+            selectedNumber.setVisibility(View.GONE);
+            MethodUtil.setPrefValues(context, KEY_PLAY_MODE, KEY_PLAY_MODE_FULL_VALUES);
+        } else if (values != null && values.equals(KEY_PLAY_MODE_FULL_VALUES)) {
+            // 443,200,测量小窗口模式，控件的宽高。
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(relativeSurfaceWidth,
+                    relativeSurfaceHeight);
+            //relativeSurface.setAnimation(AnimationUtils.loadAnimation(context, R.anim.layout_narrow));
+            relativeSurface.setLayoutParams(params);
+
+            radioGroupLeft.setVisibility(View.VISIBLE);
+            radioGroupRight.setVisibility(View.VISIBLE);
+            selectedNumber.setVisibility(View.VISIBLE);
+            MethodUtil.setPrefValues(context, KEY_PLAY_MODE, KEY_PLAY_MODE_SMALL_VALUES);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        relativeSurfaceWidth = relativeSurface.getWidth();
+        relativeSurfaceHeight = relativeSurface.getHeight();
     }
 }
