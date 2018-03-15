@@ -25,7 +25,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -35,18 +34,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int KEY_UPDATE_ITEM = 5;
     private static final int KEY_START_FLOATWINDOWS = 6; // 点击选中的歌曲开启预览界面
     private static final int KEY_SHOW_VOLUME_UI = 7; // 调节音量指令
+    private static final int KEY_ADD_CHOOSE_SONG = 8; // 添加已点歌曲功能
 
     public SurfaceView surfaceViewMain;
     public SurfaceHolder holder;
@@ -155,6 +150,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case KEY_SHOW_VOLUME_UI:
                     adjustVolumeLayout();
+                    break;
+                case KEY_ADD_CHOOSE_SONG:
+                    String chooseSongUri = (String) msg.obj;
+                    String fileName = EncapsulateClass.getFileName(chooseSongUri);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("videoName", fileName);
+                    map.put("videoPath", chooseSongUri);
+                    selectedMapList.add(map);
+                    selectedNumber.setText(selectedMapList.size() + "");
+                    MethodUtil.toast(context, getString(R.string.ui_main_alter_choose_song));
                     break;
                 case 10:
                     String format = (String) msg.obj;
@@ -244,7 +249,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
             @Override
             public void onCompleted() { // 此方法只在初始化的时候执行一次，把本地所有歌曲，全部添加到已点列表。
-                Log.e("liu", "已点歌曲:" + selectedMapList.size());
                 selectedNumber.setText(selectedMapList.size() + "");
                 getVideoInfo(); // 当已点歌曲设置完成时，selectedMapList不为null，在去执行一次此方法。
             }
@@ -271,6 +275,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             String videoPath = (String) mapList.get(position).get("video_path");
                             message = new Message();
                             message.what = KEY_START_FLOATWINDOWS;
+                            message.obj = videoPath;
+                            handler.sendMessage(message);
+                        }
+                    });
+                    adapter.setOnItemCheckedListener(new RecyclerAdapterListener.OnItemCheckedListener() {
+                        @Override
+                        public void OnItemChecked(View view, int position) {
+                            String videoPath = (String) mapList.get(position).get("video_path");
+                            message = new Message();
+                            message.what = KEY_ADD_CHOOSE_SONG;
                             message.obj = videoPath;
                             handler.sendMessage(message);
                         }
@@ -317,18 +331,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         radioGroupLeft = this.findViewById(R.id.radio_group_left);
         radioGroupRight = this.findViewById(R.id.radio_group_right);
 
-        mRadioButton1 = (RadioButton) this.findViewById(R.id.radio_left_1);
-        mRadioButton2 = (RadioButton) this.findViewById(R.id.radio_left_2);
-        mRadioButton3 = (RadioButton) this.findViewById(R.id.radio_left_3);
-        mRadioButton4 = (RadioButton) this.findViewById(R.id.radio_left_4);
-        mRadioButton5 = (RadioButton) this.findViewById(R.id.radio_left_5);
-        mRadioButton6 = (RadioButton) this.findViewById(R.id.radio_right_1);
-        mRadioButton7 = (RadioButton) this.findViewById(R.id.radio_right_2);
-        mRadioButton8 = (RadioButton) this.findViewById(R.id.radio_right_3);
-        mRadioButton9 = (RadioButton) this.findViewById(R.id.radio_right_4);
-        mRadioButton10 = (RadioButton) this.findViewById(R.id.radio_right_5);
-        mRadioButtonSetting = (RadioButton) this.findViewById(R.id.radio_btn_settings);
-        mRadioButtonTuning = (RadioButton) this.findViewById(R.id.radio_btn_tuning);
+        mRadioButton1 = this.findViewById(R.id.radio_left_1);
+        mRadioButton2 = this.findViewById(R.id.radio_left_2);
+        mRadioButton3 = this.findViewById(R.id.radio_left_3);
+        mRadioButton4 = this.findViewById(R.id.radio_left_4);
+        mRadioButton5 = this.findViewById(R.id.radio_left_5);
+        mRadioButton6 = this.findViewById(R.id.radio_right_1);
+        mRadioButton7 = this.findViewById(R.id.radio_right_2);
+        mRadioButton8 = this.findViewById(R.id.radio_right_3);
+        mRadioButton9 = this.findViewById(R.id.radio_right_4);
+        mRadioButton10 = this.findViewById(R.id.radio_right_5);
+        mRadioButtonSetting = this.findViewById(R.id.radio_btn_settings);
+        mRadioButtonTuning = this.findViewById(R.id.radio_btn_tuning);
 
         mRadioButton1.setOnClickListener(this);
         mRadioButton2.setOnClickListener(this);
@@ -575,7 +589,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[0]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_two:
@@ -585,7 +598,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     tvPresetReverb.setText(stringArray[1]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_three:
@@ -595,7 +607,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[2]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_four:
@@ -605,7 +616,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[3]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_five:
@@ -615,7 +625,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[4]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_six:
@@ -625,7 +634,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MethodUtil.setPrefValues(context, "currentReverb", preset + "");
                     PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[5]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.btn_function_seven:
@@ -638,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
-            case R.id.relative_surface: // 点击surfaceview出发全屏功能
+            case R.id.relative_surface: // 点击surfaceview触发全屏功能
                 resetSize();
                 break;
         }

@@ -58,9 +58,6 @@ public class DifferentDisplay extends Presentation implements MediaPlayer.OnPrep
         }
     };
 
-    /**
-     * 测试方法，测试广播是否通了
-     */
     public void test() {
         vvSecondScreen.seekTo(0);
         vvSecondScreen.pause();

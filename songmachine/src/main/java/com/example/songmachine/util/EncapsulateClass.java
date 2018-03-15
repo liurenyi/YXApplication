@@ -86,7 +86,6 @@ public class EncapsulateClass {
 
     /**
      * rxjava递归查询内存中的视频文件
-     *
      * @param file 传进来的file
      * @return 返回值
      */
@@ -127,6 +126,6 @@ public class EncapsulateClass {
 
     // 格式化歌曲的名字，去掉后面的后缀
     private static String formatSongName(String name) {
-        return name.substring(0, name.indexOf("."));
+        return name.contains(".") ? name.substring(0, name.indexOf(".")) : name;
     }
 }

@@ -12,4 +12,8 @@ public class RecyclerAdapterListener {
         void OnItemClick(View view, int position);
     }
 
+    public interface OnItemCheckedListener {
+        void OnItemChecked(View view, int position);
+    }
+
 }
